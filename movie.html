@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Filmas</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="has-bottom-bar">
+  <header class="movie-header">
+    <h1 id="movie-title">...</h1>
+    <button id="like-btn" class="icon-btn">🤍</button>
+  </header>
+  <main id="movie-content">
+    <div class="loading">Kraunama...</div>
+  </main>
+  <div id="error-message" class="hidden">Informacija laikinai nepasiekiama.</div>
+
+  <div id="comment-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Naujas komentaras</h3>
+      <p class="small-text">Komentarai bus rodomi visiems tik po moderatoriaus patvirtinimo.</p>
+      <input type="text" id="comment-name" placeholder="Vardas (max 50)" maxlength="50">
+      <textarea id="comment-text" placeholder="Komentaras (max 5000)" maxlength="5000"></textarea>
+      <button id="submit-comment" class="btn">Siųsti</button>
+      <button id="close-modal" class="btn btn-secondary">Atšaukti</button>
+    </div>
+  </div>
+
+  <nav class="bottom-bar">
+    <button id="btn-prev" class="btn-nav">← Prev</button>
+    <button id="btn-home" class="btn-nav">Home</button>
+    <button id="btn-back" class="btn-nav">Back</button>
+    <button id="btn-next" class="btn-nav">Next →</button>
+  </nav>
+
+  <script type="module" src="js/movie.js"></script>
+</body>
+</html>
