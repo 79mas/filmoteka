@@ -40,10 +40,8 @@ h3 {
   margin-top: 32px;
 }
 
-/* 1. Viršutinė navigacija (Back ir Like) */
-.movie-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-.icon-btn { background: none; border: none; font-size: 22px; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 8px; }
-.like-count { font-size: 15px; font-weight: 500; }
+/* 1. Viršutinė navigacija PASLĖPTA */
+.movie-header-top { display: none !important; }
 
 /* 2. Hero Sekcija (Plakatas ir Pavadinimas) */
 .hero-section { display: flex; gap: 16px; margin-bottom: 32px; }
@@ -85,11 +83,46 @@ h3 {
 /* 8. Mygtukai */
 .btn-outline { background: transparent; color: var(--accent-color); border: 1px solid var(--accent-color); border-radius: 8px; padding: 12px; width: 100%; font-family: inherit; font-weight: 500; font-size: 14px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 16px;}
 
-/* 9. Apatinė navigacija */
-.bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(9, 10, 12, 0.95); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 12px 16px calc(12px + var(--safe-bottom)) 16px; border-top: 1px solid rgba(255,255,255,0.05); }
-.btn-nav { background: transparent; color: var(--text-secondary); border: none; font-size: 10px; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 6px; font-family: inherit;}
-.btn-nav.active { color: var(--accent-color); }
-.nav-icon { font-size: 18px; }
+/* 9. NAUJAS Apatinis Meniu */
+.bottom-bar { 
+  position: fixed; 
+  bottom: 0; 
+  left: 0; 
+  width: 100%;
+  height: 70px; /* Padidintas aukštis patogumui */
+  background-color: var(--surface-color);
+  display: flex; 
+  justify-content: space-around; 
+  align-items: center;
+  border-top: 1px solid #333; 
+  z-index: 1000; 
+  padding-bottom: var(--safe-bottom); 
+}
+
+.btn-nav { 
+  background: none; 
+  border: none; 
+  color: var(--text-primary); 
+  font-size: 26px; /* Didesnės piktogramos */
+  cursor: pointer; 
+  padding: 10px; 
+  transition: all 0.2s ease; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+}
+
+/* Neaktyvaus mygtuko būsena (pilkas) */
+.btn-nav:disabled { 
+  color: #444; 
+  cursor: not-allowed; 
+  opacity: 0.5; 
+}
+
+/* Aktyvios širdutės būsena */
+.btn-nav.liked { 
+  color: var(--danger-color); 
+}
 
 /* Kategorijų sąrašo (filmų) stiliai */
 .list-title { font-weight: 600; font-size: 16px; margin-bottom: 4px; color: #ffffff; }
