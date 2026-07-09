@@ -10,17 +10,23 @@
 <body class="has-bottom-bar">
   <header>
     <h1>Mano Filmų Kolekcija</h1>
-    <p>Asmeninė kruopščiai atrinktų filmų bazė.</p>
+    <p class="page-description">Asmeninė kruopščiai atrinktų filmų bazė.</p>
   </header>
-  <main id="categories-container"><div class="loading">Kraunama...</div></main>
+  
+  <main id="categories-container"><div class="loading" style="text-align:center;">Kraunama...</div></main>
+  
+  <div id="empty-state" class="empty-state hidden">
+    Galimai gali būti, kad kažkas kažkur kažką kažkodėl sugadino, arba tiesiog nutrūko sąsajos. Aišku, gali būti, kad baigėsi internetas, bet jeigu aš būčiau Tavo vietoje pabandyčiau po kelių minučių. Turbūt.
+  </div>
+  
   <div id="error-message" class="hidden">Informacija laikinai nepasiekiama.</div>
   
   <nav class="bottom-bar">
-    <button class="btn-nav" disabled>❮</button>
-    <button class="btn-nav" style="color: var(--text-primary);">🏠</button>
-    <button class="btn-nav" disabled>📋</button>
-    <button class="btn-nav" disabled>🤍</button>
-    <button class="btn-nav" disabled>❯</button>
+    <button class="btn-nav" disabled><img src="images/icons/ic_nav_back.svg" alt="Atgal"></button>
+    <button class="btn-nav active" disabled><img src="images/icons/ic_nav_home.svg" alt="Namai"></button>
+    <button class="btn-nav" disabled><img src="images/icons/ic_nav_list.svg" alt="Sąrašas"></button>
+    <button class="btn-nav" disabled><img src="images/icons/ic_nav_like_outline.svg" alt="Patinka"></button>
+    <button class="btn-nav" disabled><img src="images/icons/ic_nav_forward.svg" alt="Pirmyn"></button>
   </nav>
 
   <script type="module" src="js/main.js"></script>
