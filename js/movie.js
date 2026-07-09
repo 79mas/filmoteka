@@ -79,4 +79,60 @@ function renderMovie(m) {
     }
   }, 100);
 }
-// ... [toliau funkcijos lieka tokios pačios] ...
+function renderInteractions(data) {
+  const likeCountEl = document.getElementById('like-count');
+  if (likeCountEl) likeCountEl.textContent = data.likes || 0;
+  const cSec = document.getElementById('comments-section');
+  if (cSec && data.comments && data.comments.length > 0) {
+    cSec.innerHTML = '<h3>I. Pastabos / Komentarai</h3>' + data.comments.map(c => '<div class="comment-card"><div class="comment-header"><div class="comment-author"><div class="avatar">' + c.Name.charAt(0).toUpperCase() + '</div>' + c.Name + '</div><div class="comment-date">' + c.Timestamp.split('T')[0] + '</div></div><div class="comment-text">' + c.Comment + '</div></div>').join('');
+  }
+}
+
+function setupBottomBar(prev, next) {
+  const bar = document.querySelector('.bottom-bar');
+  if(!bar) return;
+  bar.innerHTML = '<button id="btn-prev" class="btn-nav" ' + (prev ? '' : 'disabled') + '>⏪ Prev</button><button id="btn-home" class="btn-nav">🏠 Home</button><button id="btn-back" class="btn-nav">🔙 Back</button><button id="btn-next" class="btn-nav" ' + (next ? '' : 'disabled') + '>⏩ Next</button>';
+  document.getElementById('btn-home').onclick = () => window.location.href = 'index.html';
+  document.getElementById('btn-back').onclick = () => window.location.href = 'category.html?id=' + catId;
+  if (prev) document.getElementById('btn-prev').onclick = () => window.location.href = 'movie.html?id=' + prev + '&category=' + catId;
+  if (next) document.getElementById('btn-next').onclick = () => window.location.href = 'movie.html?id=' + next + '&category=' + catId;
+}
+
+function setupLikeBtn() {
+  const btn = document.getElementById('like-btn');
+  if (!btn) return;
+  const today = new Date().toISOString().split('T')[0];
+  const storageKey = 'like_' + movieId;
+  const storedData = JSON.parse(localStorage.getItem(storageKey) || '{}');
+  if (storedData.date === today && storedData.liked) isLiked = true;
+  btn.textContent = isLiked ? '❤️' : '🤍';
+  btn.onclick = async () => {
+    btn.disabled = true; isLiked = !isLiked; btn.textContent = isLiked ? '❤️' : '🤍';
+    let countEl = document.getElementById('like-count');
+    let currentCount = parseInt(countEl.textContent) || 0;
+    countEl.textContent = isLiked ? currentCount + 1 : currentCount - 1;
+    localStorage.setItem(storageKey, JSON.stringify({ date: today, liked: isLiked }));
+    await postAPI({ action: 'toggleLike', movieId, likeAction: isLiked ? 'like' : 'unlike' });
+    setTimeout(() => { btn.disabled = false; }, 2000);
+  };
+}
+
+function setupComments() {
+  const modal = document.getElementById('comment-modal');
+  const openBtn = document.getElementById('open-comment');
+  if (openBtn) openBtn.onclick = () => modal.classList.remove('hidden');
+  document.getElementById('close-modal').onclick = () => modal.classList.add('hidden');
+  document.getElementById('submit-comment').onclick = async () => {
+    const btn = document.getElementById('submit-comment');
+    const name = document.getElementById('comment-name').value.trim();
+    const text = document.getElementById('comment-text').value.trim();
+    if(!name || !text) return alert('Užpildykite visus laukus');
+    btn.disabled = true;
+    await postAPI({ action: 'addComment', movieId, name, comment: text });
+    modal.classList.add('hidden');
+    alert('Komentaras išsiųstas.');
+    btn.disabled = false;
+  };
+}
+
+init();
