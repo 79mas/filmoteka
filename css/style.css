@@ -1,13 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Itin tamsus fonas pagal maketą */
-  --bg-color: #090a0c;
-  --surface-color: #121418;
-  --text-primary: #ffffff;
-  --text-secondary: #8b929a;
-  --accent-color: #f5c518; /* Geltona / Auksinė */
-  --danger-color: #ff3b30; /* Raudona širdutei */
+  /* Prabangus antracitas su giliu melsvu atspalviu */
+  --bg-color: #0e1116; 
+  --surface-color: #1a1d24; 
+  --text-primary: #f4f4f5;
+  --text-secondary: #94a3b8;
+  --accent-color: #f5c518;
+  --danger-color: #ff3b30;
   --safe-bottom: env(safe-area-inset-bottom, 16px);
 }
 
