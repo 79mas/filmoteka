@@ -24,6 +24,7 @@ async function init() {
 
 function renderMovie(m) {
   document.getElementById('movie-title').textContent = m.OriginalTitle || 'Filmas';
+  document.title = m.OriginalTitle || 'Filmas';
   const container = document.getElementById('movie-content');
   container.innerHTML = '';
 
