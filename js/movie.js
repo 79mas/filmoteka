@@ -1,4 +1,4 @@
-import { fetchAPI, postAPI, handleImageError } from './api.js';
+import { fetchAPI, postAPI } from './api.js';
 
 const urlParams = new URLSearchParams(window.location.search);
 const movieId = urlParams.get('id');
@@ -27,7 +27,6 @@ function renderMovie(m) {
 
   const topNav = '<div class="movie-header-top"><button id="top-back-btn" class="icon-btn">❮</button><div style="display:flex; align-items:center; gap:8px;"><button id="like-btn" class="icon-btn" style="color: var(--danger-color);">🤍</button><span id="like-count" class="like-count">...</span></div></div>';
 
-  // Naudojame oficialią dokumento struktūrą: mov_XXXX.png
   const hero = '<div class="hero-section"><img src="images/posters/mov_' + paddedId + '.png" class="hero-poster" id="main-poster" alt="' + m.OriginalTitle + '"><div class="hero-info"><h1>' + m.OriginalTitle + '</h1>' + (m.Year ? '<div class="hero-year">(' + m.Year + ')</div>' : '') + (m.LithuanianTitle ? '<div class="hero-local">' + m.LithuanianTitle + '</div>' : '') + '<div class="hero-meta"><span class="meta-icon">⏱</span> ' + (m.Duration || '--') + ' min &nbsp;|&nbsp; ' + (m.Genre || '') + '</div></div></div>';
 
   const addSection = (title, content) => { if (!content) return ''; return '<h3>' + title + '</h3><div>' + content + '</div>'; };
@@ -61,7 +60,6 @@ function renderMovie(m) {
   if (galCount > 0) {
     let imgs = '';
     for(let i=1; i<=galCount; i++) {
-      // Naudojame oficialią dokumento struktūrą: mov_XXXX-YYY.png
       imgs += '<img src="images/gallery/mov_' + paddedId + '-' + String(i).padStart(3, '0') + '.png" class="gallery-img" id="gal-' + i + '">';
     }
     galHtml = '<div class="gallery-grid">' + imgs + '</div>';
@@ -70,14 +68,25 @@ function renderMovie(m) {
   container.innerHTML = topNav + hero + addSection('A. Pagrindinė informacija', crewHtml) + addSection('C. Papildoma informacija', extraHtml) + addSection('D. Vertinimai', ratingsHtml) + addSection('E. Aprašymas', descHtml) + addSection('F. Video anonsas (Trailer)', trailerHtml) + (m.IMDbLink ? addSection('G. Daugiau apie filmą', '<a href="' + m.IMDbLink + '" target="_blank" class="btn-outline" style="text-decoration:none;"><img src="images/logos/imdb.png" style="height:20px;"> Peržiūrėti filme IMDb</a>') : '') + addSection('H. Galerija', galHtml) + '<div id="comments-section"></div>' + '<button id="open-comment" class="btn-outline">💬 Palikti komentarą</button>';
 
   document.getElementById('top-back-btn').onclick = () => window.location.href = 'category.html?id=' + catId;
-  setTimeout(() => {
-    const poster = document.getElementById('main-poster');
-    if(poster) handleImageError(poster);
-    for(let i=1; i<=galCount; i++) {
-      const gi = document.getElementById('gal-' + i);
-      if(gi) handleImageError(gi);
+  
+  // Teisingas klaidų gaudymas (suveikia tik jei failo išties NĖRA)
+  const poster = document.getElementById('main-poster');
+  if (poster) {
+    poster.onerror = function() {
+      this.onerror = null; 
+      this.src = 'images/posters/mov_0000.png';
+    };
+  }
+
+  for (let i = 1; i <= galCount; i++) {
+    const gi = document.getElementById('gal-' + i);
+    if (gi) {
+      gi.onerror = function() {
+        this.onerror = null;
+        this.src = 'images/posters/mov_0000.png';
+      };
     }
-  }, 100);
+  }
 }
 
 function renderInteractions(data) {
