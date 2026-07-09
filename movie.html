@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Filmas</title>
   <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
-  <link rel="stylesheet" href="css/style.css?v=2">
+  <link rel="stylesheet" href="css/style.css?v=3">
 </head>
 <body class="has-bottom-bar">
 
@@ -13,18 +13,38 @@
     <div style="text-align:center; padding-top: 50px;">Kraunama...</div>
   </div>
 
+  <div id="empty-state" class="empty-state hidden">
+    Tyliau! Ačiū. Oooo... Išgirdau! Kažkas iš internetų sakė, kad tokio filmo dar nėra šioje duomenų bazėje. Tavo elgesys panašus į įsilaužėlio!
+  </div>
+
   <div id="comment-modal" class="modal hidden">
     <div class="modal-content">
       <h3>Palikti komentarą</h3>
-      <input type="text" id="comment-name" placeholder="Jūsų vardas">
-      <textarea id="comment-text" placeholder="Parašykite komentarą..."></textarea>
-      <button id="submit-comment" class="btn-outline">Išsiųsti</button>
-      <button id="close-modal" class="btn-outline" style="border-color: #666; color: #666;">Uždaryti</button>
+      <input type="text" id="comment-name" placeholder="Jūsų vardas" maxlength="50">
+      <textarea id="comment-text" placeholder="Parašykite komentarą..." maxlength="5000"></textarea>
+      <div class="modal-actions">
+        <button id="close-modal" class="btn-outline btn-cancel">Atšaukti</button>
+        <button id="submit-comment" class="btn-outline">Išsiųsti</button>
+      </div>
+      <div id="comment-success" class="hidden">Ačiū! Jūsų komentaras išsiųstas moderatoriui. Komentaras bus viešai rodomas tik po patvirtinimo.</div>
     </div>
   </div>
 
-  <nav class="bottom-bar"></nav>
+  <div id="lightbox" class="hidden">
+    <button id="lightbox-close"><img src="images/icons/ic_gallery_close.svg" alt="Uždaryti"></button>
+    <button id="lightbox-prev"><img src="images/icons/ic_gallery_prev.svg" alt="Atgal"></button>
+    <img id="lightbox-img" src="" alt="Galerijos nuotrauka">
+    <button id="lightbox-next"><img src="images/icons/ic_gallery_next.svg" alt="Pirmyn"></button>
+  </div>
 
-  <script type="module" src="js/movie.js?v=2"></script>
+  <nav class="bottom-bar">
+    <button class="btn-nav" id="btn-prev" disabled><img src="images/icons/ic_nav_back.svg" alt="Atgal"></button>
+    <button class="btn-nav" id="btn-home"><img src="images/icons/ic_nav_home.svg" alt="Namai"></button>
+    <button class="btn-nav" id="btn-back"><img src="images/icons/ic_nav_list.svg" alt="Sąrašas"></button>
+    <button class="btn-nav" id="btn-like"><img src="images/icons/ic_nav_like_outline.svg" alt="Patinka" id="like-icon"></button>
+    <button class="btn-nav" id="btn-next" disabled><img src="images/icons/ic_nav_forward.svg" alt="Pirmyn"></button>
+  </nav>
+
+  <script type="module" src="js/movie.js?v=3"></script>
 </body>
 </html>
