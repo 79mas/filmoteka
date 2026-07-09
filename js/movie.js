@@ -35,12 +35,13 @@ function renderMovie(m) {
   addBlock('Papildoma informacija', extra.join(''));
 
   // D. Vertinimai (grafiniai ženkliukai)
+// D. Vertinimai (tikri logotipai iš /images/logos/ katalogo)
   const ratings = [];
-  if(m.IMDb) ratings.push(`<div class="rating-badge imdb"><span>IMDb</span> ${m.IMDb}</div>`);
-  if(m.Metacritic) ratings.push(`<div class="rating-badge meta"><span>Meta</span> ${m.Metacritic}</div>`);
-  if(m.RTCritics) ratings.push(`<div class="rating-badge rt"><span>RT Critics</span> ${m.RTCritics}</div>`);
-  if(m.RTAudience) ratings.push(`<div class="rating-badge rt-aud"><span>RT Audience</span> ${m.RTAudience}</div>`);
-  if(m.CommunityRating) ratings.push(`<div class="rating-badge comm"><span>Bendruomenė</span> ${m.CommunityRating}</div>`);
+  if(m.IMDb) ratings.push(`<div class="rating-badge"><img src="images/logos/imdb.png" class="rating-logo" alt="IMDb"> ${m.IMDb}</div>`);
+  if(m.Metacritic) ratings.push(`<div class="rating-badge"><img src="images/logos/metacritic.png" class="rating-logo" alt="Metacritic"> ${m.Metacritic}</div>`);
+  if(m.RTCritics) ratings.push(`<div class="rating-badge"><img src="images/logos/rt-critics.png" class="rating-logo" alt="RT Critics"> ${m.RTCritics}</div>`);
+  if(m.RTAudience) ratings.push(`<div class="rating-badge"><img src="images/logos/rt-audience.png" class="rating-logo" alt="RT Audience"> ${m.RTAudience}</div>`);
+  if(m.CommunityRating) ratings.push(`<div class="rating-badge"><img src="images/logos/community.png" class="rating-logo" alt="Bendruomenė"> ${m.CommunityRating}</div>`);
   
   if (ratings.length > 0) {
     addBlock('Vertinimai', `<div class="ratings-container">${ratings.join('')}</div>`);
