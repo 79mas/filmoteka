@@ -27,7 +27,7 @@ function renderMovie(m) {
 
   const topNav = '<div class="movie-header-top"><button id="top-back-btn" class="icon-btn">❮</button><div style="display:flex; align-items:center; gap:8px;"><button id="like-btn" class="icon-btn" style="color: var(--danger-color);">🤍</button><span id="like-count" class="like-count">...</span></div></div>';
 
-  // Naudojame mov_XXXX.png struktūrą
+  // Naudojame oficialią dokumento struktūrą: mov_XXXX.png
   const hero = '<div class="hero-section"><img src="images/posters/mov_' + paddedId + '.png" class="hero-poster" id="main-poster" alt="' + m.OriginalTitle + '"><div class="hero-info"><h1>' + m.OriginalTitle + '</h1>' + (m.Year ? '<div class="hero-year">(' + m.Year + ')</div>' : '') + (m.LithuanianTitle ? '<div class="hero-local">' + m.LithuanianTitle + '</div>' : '') + '<div class="hero-meta"><span class="meta-icon">⏱</span> ' + (m.Duration || '--') + ' min &nbsp;|&nbsp; ' + (m.Genre || '') + '</div></div></div>';
 
   const addSection = (title, content) => { if (!content) return ''; return '<h3>' + title + '</h3><div>' + content + '</div>'; };
@@ -61,7 +61,7 @@ function renderMovie(m) {
   if (galCount > 0) {
     let imgs = '';
     for(let i=1; i<=galCount; i++) {
-      // Naudojame mov_XXXX-YYY.png struktūrą
+      // Naudojame oficialią dokumento struktūrą: mov_XXXX-YYY.png
       imgs += '<img src="images/gallery/mov_' + paddedId + '-' + String(i).padStart(3, '0') + '.png" class="gallery-img" id="gal-' + i + '">';
     }
     galHtml = '<div class="gallery-grid">' + imgs + '</div>';
@@ -79,6 +79,7 @@ function renderMovie(m) {
     }
   }, 100);
 }
+
 function renderInteractions(data) {
   const likeCountEl = document.getElementById('like-count');
   if (likeCountEl) likeCountEl.textContent = data.likes || 0;
