@@ -32,8 +32,11 @@ function renderMovie(m) {
     container.innerHTML += `<div class="${className}"><h3>${title}</h3><div>${content}</div></div>`;
   };
 
+  // Priverčiame ID būti keturženkliu formatu (pvz. '0001')
+  const paddedId = String(m.ID).padStart(4, '0');
+
   // A. Pagrindinė informacija
-  const imgStr = `<img src="images/posters/${m.ID}.png" class="poster" id="main-poster" alt="${m.OriginalTitle}">`;
+  const imgStr = `<img src="images/posters/mov_${paddedId}.png" class="poster" id="main-poster" alt="${m.OriginalTitle}">`;
   const info = [];
   if (m.LithuanianTitle) info.push(`<div class="info-row"><span class="label">Pavadinimas (LT):</span> ${m.LithuanianTitle}</div>`);
   if (m.Duration) info.push(`<div class="info-row"><span class="label">Trukmė:</span> ${m.Duration} min.</div>`);
@@ -90,7 +93,9 @@ function renderMovie(m) {
   if (galCount > 0) {
     let galHtml = '';
     for(let i=1; i<=galCount; i++) {
-      galHtml += `<img src="images/gallery/${m.ID}/${i}.png" class="gallery-img" id="gal-${i}">`;
+      // Priverčiame galerijos sekos numerį būti triženkliu formatu (pvz. '001')
+      const paddedSeq = String(i).padStart(3, '0');
+      galHtml += `<img src="images/gallery/mov_${paddedId}-${paddedSeq}.png" class="gallery-img" id="gal-${i}">`;
     }
     addBlock('Galerija', galHtml);
   }
@@ -98,6 +103,7 @@ function renderMovie(m) {
   container.innerHTML += `<div id="comments-section" class="section"></div>`;
   container.innerHTML += `<button id="open-comment" class="btn">Rašyti komentarą</button>`;
 
+  // Klaidos (Image Fallback) valdymas
   setTimeout(() => {
     const poster = document.getElementById('main-poster');
     if(poster) handleImageError(poster);
