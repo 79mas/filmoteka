@@ -7,13 +7,22 @@
   <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="has-bottom-bar">
   <header>
     <a href="index.html" class="btn-text">← Atgal į pradžią</a>
     <h1 id="category-title">...</h1>
   </header>
   <main id="movies-container"><div class="loading">Kraunama...</div></main>
   <div id="error-message" class="hidden">Informacija laikinai nepasiekiama.</div>
+  
+  <nav class="bottom-bar">
+    <button class="btn-nav" disabled>❮</button>
+    <button class="btn-nav" onclick="window.location.href='index.html'">🏠</button>
+    <button class="btn-nav" style="color: var(--text-primary);">📋</button>
+    <button class="btn-nav" disabled>🤍</button>
+    <button class="btn-nav" disabled>❯</button>
+  </nav>
+
   <script type="module" src="js/category.js"></script>
 </body>
 </html>
