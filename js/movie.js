@@ -60,13 +60,13 @@ function renderMovie(m) {
     <div class="movie-header-grid">
       <img src="images/posters/mov_${paddedId}.png" class="mh-poster" id="main-poster" alt="${m.OriginalTitle}">
       <div class="mh-info">
-        <div class="mh-title-en">${m.OriginalTitle}</div>
+        <div class="mh-title-en">${m.OriginalTitle || ''}</div>
         ${m.LithuanianTitle ? `<div class="mh-title-lt">${m.LithuanianTitle}</div>` : ''}
         <div class="mh-meta">
-           <img src="images/icons/ic_info_audio.svg"> ${[m.Dubbing, m.Subtitles].filter(Boolean).join(' + ') || '--'}
+           <img src="images/logos/ic_info_language.svg"> ${[m.Dubbing, m.Subtitles].filter(Boolean).join(' + ') || '--'}
         </div>
         <div class="mh-meta">
-           <img src="images/icons/ic_info_director.svg"> ${[m.Year, m.Country].filter(Boolean).join(' | ') || '--'}
+           <img src="images/logos/ic_info_year.svg"> ${[m.Year, m.Country].filter(Boolean).join(' | ') || '--'}
         </div>
       </div>
     </div>
@@ -77,13 +77,13 @@ function renderMovie(m) {
       { label: 'Režisierius', icon: 'ic_info_director.svg', val: m.Director },
       { label: 'Scenarijus', icon: 'ic_info_writer.svg', val: m.Screenplay },
       { label: 'Kompozitorius', icon: 'ic_info_composer.svg', val: m.Composer },
-      { label: 'Operatorius', icon: 'ic_info_cinematographer.svg', val: m.Cinematographer },
+      { label: 'Operatorius', icon: 'ic_info_camera.svg', val: m.Cinematographer },
       { label: 'Aktoriai', icon: 'ic_info_cast.svg', val: m.MainActors }
   ].filter(i => i.val);
   
   let crewHtml = crewInfo.length > 0 ? crewInfo.map(i => `
       <div class="info-row">
-         <div class="label"><img src="images/icons/${i.icon}" class="label-icon"> ${i.label}</div>
+         <div class="label"><img src="images/logos/${i.icon}" class="label-icon"> ${i.label}</div>
          <div class="value">${i.val}</div>
       </div>
   `).join('') : '';
@@ -102,14 +102,14 @@ function renderMovie(m) {
   ];
   let ratingsHtml = rList.map(r => `
       <div class="rating-badge">
-          <img src="images/icons/${r.icon}" class="rating-logo">
+          <img src="images/logos/${r.icon}" class="rating-logo">
           <span class="rating-score" ${r.id === 'comm' ? 'id="community-rating-val"' : ''}>${r.val || '-'}</span>
       </div>
   `).join('');
   let ratingsBlock = `<div class="ratings-container">${ratingsHtml}</div><div class="ratings-date">Atnaujinta: ${todayStr}</div>`;
 
   // IMDB NUORODA
-  let imdbLinkHtml = m.IMDbLink ? `<a href="${m.IMDbLink}" target="_blank" class="btn-outline" style="text-decoration:none;"><img src="images/icons/ic_rate_imdb.svg" style="height:20px;"> peržiūrėti filmo IMDb puslapį.</a>` : '';
+  let imdbLinkHtml = m.IMDbLink ? `<a href="${m.IMDbLink}" target="_blank" class="btn-outline" style="text-decoration:none;"><img src="images/logos/ic_rate_imdb.svg" style="height:20px;"> peržiūrėti filmo IMDb puslapį.</a>` : '';
 
   // TREILERIS (Lazy Load)
   let trailerHtml = '';
@@ -124,7 +124,7 @@ function renderMovie(m) {
       
       trailerHtml = `
           <div class="trailer-placeholder" id="yt-placeholder" data-url="${embedUrl}">
-             <img src="images/icons/ic_media_play.svg" alt="Play">
+             <img src="images/logos/ic_media_play.svg" alt="Play">
           </div>
       `;
   }
@@ -155,7 +155,7 @@ function renderMovie(m) {
                         (imdbLinkHtml ? `<div style="margin-top:16px;">${imdbLinkHtml}</div>` : '') +
                         addBlock(trailerHtml) + 
                         addBlock(galHtml) + 
-                        `<hr class="section-divider"><div id="comments-section"></div><button id="open-comment" class="btn-outline" style="margin-top: 16px;"><img src="images/icons/ic_info_writer.svg" style="width:20px;"> Palikti komentarą</button>`;
+                        `<hr class="section-divider"><div id="comments-section"></div><button id="open-comment" class="btn-outline" style="margin-top: 16px;"><img src="images/logos/ic_info_writer.svg" style="width:20px;"> Palikti komentarą</button>`;
 
   // Klaidingų paveikslėlių (Placeholder) valdymas
   const poster = document.getElementById('main-poster');
@@ -235,7 +235,7 @@ function setupLikeBtn() {
     isLiked = true;
   }
   
-  icon.src = isLiked ? 'images/icons/ic_nav_like_filled.svg' : 'images/icons/ic_nav_like_outline.svg';
+  icon.src = isLiked ? 'images/logos/ic_nav_like_filled.svg' : 'images/logos/ic_nav_like_outline.svg';
   
   btn.onclick = async () => {
     const now = new Date().toISOString().split('T')[0];
@@ -249,7 +249,7 @@ function setupLikeBtn() {
     btn.disabled = true; 
     isLiked = !isLiked; 
     
-    icon.src = isLiked ? 'images/icons/ic_nav_like_filled.svg' : 'images/icons/ic_nav_like_outline.svg';
+    icon.src = isLiked ? 'images/logos/ic_nav_like_filled.svg' : 'images/logos/ic_nav_like_outline.svg';
     
     let badgeEl = document.getElementById('community-rating-val');
     if(badgeEl) {
