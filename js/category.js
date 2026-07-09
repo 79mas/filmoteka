@@ -16,7 +16,10 @@ async function init() {
       const a = document.createElement('a');
       a.href = `movie.html?id=${m.ID}&category=${catId}`;
       a.className = 'card';
-      a.innerHTML = `<h3>${m.OriginalTitle}</h3><p>${m.Year} | ${m.Genre}</p>`;
+      a.innerHTML = `
+  <div class="list-title">${m.OriginalTitle} <span class="list-year">${m.Year ? `(${m.Year})` : ''}</span></div>
+  <div class="list-genre">${m.Genre || ''}</div>
+`;
       container.appendChild(a);
     });
   } catch (e) {
