@@ -47,23 +47,21 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 }
 
 /* Teksto konteineris Pradinio puslapio kortelėms */
-.cat-content {
-  padding: 16px;
-}
+.cat-content { padding: 16px; }
 .cat-content h2 { font-size: 18px; color: var(--text-primary); margin-bottom: 4px; }
 .cat-content p { font-size: 13px; color: var(--text-secondary); }
 .cat-count { font-weight: 400; font-size: 14px; color: var(--text-secondary); margin-left: 6px; }
 
-/* Vėliavėlės fonas dešinėje pusėje (~35% pločio, 100% aukščio) */
+/* Vėliavėlės fonas dešinėje (aukštis lygiai 100%, plotis auto) */
 .card-bg-flag {
   position: absolute;
   top: 0; right: 0; bottom: 0;
-  width: 35%; 
-  background-size: cover;
+  width: 40%; 
+  background-size: auto 100%; /* Griežta proporcija: aukštis 100%, plotis koks priklauso */
   background-position: right center;
   background-repeat: no-repeat;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 50%);
-  mask-image: linear-gradient(to right, transparent 0%, black 50%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 60%);
+  mask-image: linear-gradient(to right, transparent 0%, black 60%);
   z-index: 1;
 }
 
@@ -72,12 +70,12 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
   position: relative; 
   z-index: 2; 
   text-align: left; 
-  width: 80%; 
+  width: 75%; 
   padding: 16px; 
   text-shadow: 0 1px 4px rgba(0,0,0,0.85); 
 }
 
-/* KATEGORIJŲ SĄRAŠO (FILMŲ) STILIAI - 3 EILUTĖS */
+/* KATEGORIJŲ SĄRAŠO STILIAI */
 .list-title { font-weight: 600; font-size: 16px; color: #ffffff; text-align: left; }
 .list-title-lt { font-size: 13px; color: var(--accent-color); font-weight: 500; margin-top: 2px; text-align: left; }
 .list-meta { font-size: 13px; color: var(--text-secondary); margin-top: 2px; display: flex; align-items: center; text-align: left; }
@@ -107,7 +105,7 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
   flex-shrink: 0;
 }
 
-/* Informacijos eilutės (Pagrindinė / Kūrybinė komanda) */
+/* Informacijos eilutės */
 .info-row { display: flex; margin-bottom: 12px; font-size: 13px; line-height: 1.4; }
 .label { width: 140px; color: var(--text-secondary); flex-shrink: 0; display: flex; align-items: center; gap: 10px; }
 .value { flex-grow: 1; color: var(--text-primary); }
@@ -122,10 +120,12 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 /* Aprašymas */
 .description-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; text-align: justify; }
 
-/* Trailer Lazy Load Placeholder */
+/* Treilerio blokas */
 .trailer-placeholder { width: 100%; aspect-ratio: 16/9; background-color: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
-.trailer-placeholder img { width: 64px; height: 64px; transition: transform 0.2s; }
-.trailer-placeholder:hover img { transform: scale(1.1); }
+.trailer-content { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 50%; gap: 12px; }
+.trailer-label { color: var(--text-secondary); font-size: 14px; font-weight: 500; text-align: center; }
+.trailer-play-icon { width: 33%; height: auto; max-width: 80px; transition: transform 0.2s; }
+.trailer-placeholder:hover .trailer-play-icon { transform: scale(1.1); }
 
 /* Galerijos tinklelis */
 .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
