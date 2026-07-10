@@ -1,4 +1,4 @@
-const API_URL = 'https://script.google.com/macros/s/AKfycbzXqzOYaVhbg2SEGAVk-Bwo4hDNqNUNyAo2whemrCjgf5x-rn9pxSnWEyKFcxLMbSYB/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbw8TrNM5laiDoJE77pF7PMVIdOtlUhYyFJvUq5A_0HCHCDI5v__YkNCwyUMOh-Teu3c/exec';
 
 export async function fetchAPI(action, params = {}) {
   const url = new URL(API_URL);
@@ -6,7 +6,8 @@ export async function fetchAPI(action, params = {}) {
   Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
   
   const cacheKey = `cache_${action}_${new URLSearchParams(params).toString()}`;
-  const useCache = ['getCategories', 'getMovies', 'getMovie'].includes(action);
+  // Pridėtas getConfig, kad svetainės nustatymai taip pat būtų saugomi naršyklės atmintyje
+  const useCache = ['getConfig', 'getCategories', 'getMovies', 'getMovie'].includes(action);
   
   if (useCache) {
     const cached = sessionStorage.getItem(cacheKey);
