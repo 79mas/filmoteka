@@ -10,7 +10,12 @@ async function init() {
 
   try {
     const categories = await fetchAPI('getCategories');
-    const currentCat = categories.find(c => String(c.ID) === String(catId));
+    
+    let currentCat = categories.find(c => String(c.ID) === String(catId));
+    if (catId === 'all') {
+      currentCat = { Name: 'Visi filmai', Description: 'Pilnas visų kolekcijoje esančių filmų sąrašas.' };
+    }
+
     if (currentCat) {
       titleEl.textContent = currentCat.Name;
       descEl.textContent = currentCat.Description || '';
@@ -19,9 +24,10 @@ async function init() {
     }
 
     const allMovies = await fetchAPI('getMovies');
-    const catMovies = allMovies
-      .filter(m => String(m.Category) === String(catId))
-      .sort((a, b) => String(a.OriginalTitle).localeCompare(String(b.OriginalTitle)));
+    
+    const catMovies = catId === 'all'
+      ? allMovies.sort((a, b) => String(a.OriginalTitle).localeCompare(String(b.OriginalTitle)))
+      : allMovies.filter(m => String(m.Category) === String(catId)).sort((a, b) => String(a.OriginalTitle).localeCompare(String(b.OriginalTitle)));
 
     if (catMovies.length === 0) {
       container.classList.add('hidden');
