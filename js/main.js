@@ -7,7 +7,6 @@ async function init() {
   try {
     const categories = await fetchAPI('getCategories');
     
-    // Tuščios būsenos patikrinimas
     if (!categories || categories.length === 0) {
       container.classList.add('hidden');
       emptyState.classList.remove('hidden');
@@ -19,10 +18,10 @@ async function init() {
       const a = document.createElement('a');
       a.href = `category.html?id=${cat.ID}`;
       a.className = 'card';
-      a.innerHTML = `<h2>${cat.Name}</h2><p>${cat.Description || ''}</p>`;
+      // Pridėta div.cat-content su padding'u, apsaugant patį card
+      a.innerHTML = `<div class="cat-content"><h2>${cat.Name}</h2><p>${cat.Description || ''}</p></div>`;
       container.appendChild(a);
       
-      // Pridedame vizualų atskyrimą tarp kategorijų (išskyrus po paskutinės)
       if (index < categories.length - 1) {
         const div = document.createElement('div');
         div.className = 'category-divider';
