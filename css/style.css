@@ -35,7 +35,6 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 .category-divider { height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%); margin: 24px 0; }
 .section-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 24px 0; border: none; }
 
-/* KORTELĖS BAZĖ */
 .card {
   display: block;
   background: var(--surface-color);
@@ -46,18 +45,16 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
   overflow: hidden;
 }
 
-/* Teksto konteineris Pradinio puslapio kortelėms */
 .cat-content { padding: 16px; }
 .cat-content h2 { font-size: 18px; color: var(--text-primary); margin-bottom: 4px; }
 .cat-content p { font-size: 13px; color: var(--text-secondary); }
 .cat-count { font-weight: 400; font-size: 14px; color: var(--text-secondary); margin-left: 6px; }
 
-/* Vėliavėlės fonas dešinėje (aukštis lygiai 100%, plotis auto) */
 .card-bg-flag {
   position: absolute;
   top: 0; right: 0; bottom: 0;
   width: 40%; 
-  background-size: auto 100%; /* Griežta proporcija: aukštis 100%, plotis koks priklauso */
+  background-size: auto 100%;
   background-position: right center;
   background-repeat: no-repeat;
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 60%);
@@ -65,7 +62,6 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
   z-index: 1;
 }
 
-/* Teksto konteineris Kategorijų (filmų) puslapio kortelėms */
 .card-content { 
   position: relative; 
   z-index: 2; 
@@ -75,7 +71,6 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
   text-shadow: 0 1px 4px rgba(0,0,0,0.85); 
 }
 
-/* KATEGORIJŲ SĄRAŠO STILIAI */
 .list-title { font-weight: 600; font-size: 16px; color: #ffffff; text-align: left; }
 .list-title-lt { font-size: 13px; color: var(--accent-color); font-weight: 500; margin-top: 2px; text-align: left; }
 .list-meta { font-size: 13px; color: var(--text-secondary); margin-top: 2px; display: flex; align-items: center; text-align: left; }
@@ -83,18 +78,35 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 
 .movie-header-top { display: none !important; }
 
-/* NAUJA FILMO HEADERIO SEKCIJA */
 .movie-header-grid { display: flex; gap: 16px; margin-bottom: 24px; }
 .mh-poster { width: 130px; border-radius: 8px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.4); object-fit: cover; }
-.mh-info { display: flex; flex-direction: column; justify-content: flex-start; gap: 6px; width: 100%; overflow: hidden; }
-.mh-title-en { font-size: 20px; font-weight: 700; color: var(--text-primary); line-height: 1.2; }
-.mh-title-lt { font-size: 14px; color: var(--accent-color); font-weight: 500; line-height: 1.3; }
+.mh-info { display: flex; flex-direction: column; justify-content: flex-start; gap: 8px; width: 100%; overflow: hidden; }
 
-/* INFO BLOKAS (2x2 Grid) */
-.mh-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-.mh-meta-item { font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mh-title-en { font-size: 20px; font-weight: 700; color: var(--text-primary); line-height: 1.2; overflow-wrap: break-word; word-break: break-word; }
+.mh-title-lt { font-size: 14px; color: var(--accent-color); font-weight: 500; line-height: 1.3; overflow-wrap: break-word; word-break: break-word; }
 
-/* IKONŲ DAŽYMAS (Taikoma TIK ic_info_ piktogramoms) */
+.mh-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+.mh-meta-item { font-size: 13px; color: var(--text-secondary); display: flex; align-items: flex-start; gap: 6px; white-space: normal; overflow-wrap: break-word; line-height: 1.4; }
+
+.transformation-box {
+  background: rgba(245, 197, 24, 0.04);
+  border-left: 2px solid var(--accent-color);
+  padding: 14px 16px;
+  border-radius: 4px 8px 8px 4px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  text-align: justify;
+}
+.transformation-box-label {
+  font-weight: 600;
+  color: var(--accent-color);
+  margin-bottom: 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .icon-yellow {
   display: inline-block;
   width: 16px; height: 16px;
@@ -105,33 +117,27 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
   flex-shrink: 0;
 }
 
-/* Informacijos eilutės */
 .info-row { display: flex; margin-bottom: 12px; font-size: 13px; line-height: 1.4; }
 .label { width: 140px; color: var(--text-secondary); flex-shrink: 0; display: flex; align-items: center; gap: 10px; }
 .value { flex-grow: 1; color: var(--text-primary); }
 
-/* Vertinimai */
 .ratings-container { display: flex; justify-content: space-between; gap: 8px; text-align: center; align-items: flex-end; margin-bottom: 8px;}
 .rating-badge { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; color: var(--text-secondary); width: 20%;}
 .rating-logo { height: 26px; width: auto; max-width: 100%; object-fit: contain; margin-bottom: 2px; }
 .rating-score { color: var(--text-primary); font-weight: 500; font-size: 12px;}
 .ratings-date { font-size: 10px; color: var(--text-secondary); text-align: center; opacity: 0.5; margin-top: 8px; }
 
-/* Aprašymas */
 .description-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; text-align: justify; }
 
-/* Treilerio blokas */
 .trailer-placeholder { width: 100%; aspect-ratio: 16/9; background-color: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
 .trailer-content { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 50%; gap: 12px; }
 .trailer-label { color: var(--text-secondary); font-size: 14px; font-weight: 500; text-align: center; }
 .trailer-play-icon { width: 33%; height: auto; max-width: 80px; transition: transform 0.2s; }
 .trailer-placeholder:hover .trailer-play-icon { transform: scale(1.1); }
 
-/* Galerijos tinklelis */
 .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .gallery-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; cursor: pointer; }
 
-/* Komentarai */
 #comments-list { max-height: 400px; overflow-y: auto; padding-right: 4px; margin-bottom: 16px; }
 #comments-list::-webkit-scrollbar { width: 4px; }
 #comments-list::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
@@ -142,16 +148,13 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 .comment-date { font-size: 11px; color: var(--text-secondary); }
 .comment-text { font-size: 13px; color: var(--text-secondary); margin-bottom: 0; line-height: 1.5; text-align: justify;}
 
-/* Tuščios būsenos */
 .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 14px; line-height: 1.6; font-style: italic; }
 
-/* Mygtukai */
 .btn-outline { background: transparent; color: var(--accent-color); border: 1px solid var(--accent-color); border-radius: 8px; padding: 12px; width: 100%; font-family: inherit; font-weight: 500; font-size: 14px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 16px; transition: background 0.2s;}
 .btn-outline:hover { background: rgba(245,197,24,0.1); }
 .btn-cancel { border-color: #666; color: #94a3b8; }
 .btn-cancel:hover { background: rgba(255,255,255,0.05); }
 
-/* Modaliniai langai (Komentarai) */
 .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(14,17,22,0.95); z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 16px; }
 .modal-content { background: var(--surface-color); border-radius: 12px; padding: 24px; width: 100%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 12px;}
 .modal-content h3 { border: none; margin: 0 0 8px 0; padding: 0; font-size: 16px; color: var(--text-primary); text-align: center; }
@@ -161,7 +164,6 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 .modal-actions button { margin-top: 0; }
 #comment-success { color: var(--accent-color); font-size: 13px; margin-top: 8px; text-align: center; line-height: 1.4; }
 
-/* Lightbox Galerijai */
 #lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(14,17,22,0.98); z-index: 4000; display: flex; align-items: center; justify-content: center; }
 #lightbox-img { max-width: 95%; max-height: 85vh; border-radius: 4px; object-fit: contain; }
 #lightbox-close { position: absolute; top: 20px; right: 20px; background: none; border: none; cursor: pointer; padding: 8px; }
@@ -171,7 +173,6 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 #lightbox-close img { width: 32px; height: 32px; }
 #lightbox-prev img, #lightbox-next img { width: 40px; height: 40px; }
 
-/* Apatinis Meniu */
 .bottom-bar { 
   position: fixed; 
   bottom: 0; 
