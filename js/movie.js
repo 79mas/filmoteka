@@ -46,7 +46,6 @@ async function init() {
   }
 }
 
-// SVG ikonos dažymui per CSS Mask (tik ic_info_...)
 const getInfoIconHtml = (iconName) => {
   return `<span class="icon-yellow" style="-webkit-mask-image: url('images/logos/${iconName}'); mask-image: url('images/logos/${iconName}');"></span>`;
 };
@@ -75,6 +74,13 @@ function renderMovie(m) {
     </div>
   `;
 
+  let transformHtml = m.TransformationStage ? `
+    <div class="transformation-box">
+      <div class="transformation-box-label">Transformacijos etapas</div>
+      ${m.TransformationStage}
+    </div>
+  ` : '';
+
   const crewInfo = [
       { label: 'Režisierius', icon: 'ic_info_director.svg', val: m.Director },
       { label: 'Scenarijus', icon: 'ic_info_writer.svg', val: m.Screenplay },
@@ -92,7 +98,6 @@ function renderMovie(m) {
 
   let descHtml = m.Description ? `<div class="description-text">${m.Description}</div>` : '';
 
-  // Nupjauname laiką (paliekame tik pirmus 10 simbolių YYYY-MM-DD)
   let ratingDateStr = m.RatingDate ? String(m.RatingDate).substring(0, 10) : new Date().toISOString().split('T')[0];
 
   const rList = [
@@ -121,7 +126,6 @@ function renderMovie(m) {
           if (ampersandIndex !== -1) embedUrl = embedUrl.substring(0, ampersandIndex);
       }
       
-      // Atnaujintas treilerio blokas su papildomu tekstu
       trailerHtml = `
           <div class="trailer-placeholder" id="yt-placeholder" data-url="${embedUrl}">
              <div class="trailer-content">
@@ -150,6 +154,7 @@ function renderMovie(m) {
   };
 
   container.innerHTML = heroHtml + 
+                        addBlock(transformHtml) +
                         addBlock(crewHtml) + 
                         addBlock(descHtml) + 
                         addBlock(ratingsBlock) + 
@@ -294,7 +299,6 @@ function setupComments() {
     btn.textContent = "Išsiųsti";
   };
 
-  // Uždaryti langą paspaudus "Gerai" po sėkmingo siuntimo
   okBtn.onclick = () => {
     modal.classList.add('hidden');
   };
