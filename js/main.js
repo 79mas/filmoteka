@@ -5,7 +5,13 @@ async function init() {
   const emptyState = document.getElementById('empty-state');
   
   try {
-    const categories = await fetchAPI('getCategories');
+    // Siunčiame dvi užklausas vienu metu: gauti kategorijas ir visus filmus.
+    // Tai ne tik leis suskaičiuoti filmus, bet ir iškart "užkešuoti" filmų sąrašą 
+    // sekantiems lankytojo paspaudimams!
+    const [categories, allMovies] = await Promise.all([
+      fetchAPI('getCategories'),
+      fetchAPI('getMovies')
+    ]);
     
     if (!categories || categories.length === 0) {
       container.classList.add('hidden');
@@ -15,11 +21,21 @@ async function init() {
     
     container.innerHTML = '';
     categories.forEach((cat, index) => {
+      // Suskaičiuojame, kiek filmų priklauso šiai konkrečiai kategorijai
+      const movieCount = allMovies.filter(m => String(m.Category) === String(cat.ID)).length;
+      
       const a = document.createElement('a');
       a.href = `category.html?id=${cat.ID}`;
       a.className = 'card';
-      // Pridėta div.cat-content su padding'u, apsaugant patį card
-      a.innerHTML = `<div class="cat-content"><h2>${cat.Name}</h2><p>${cat.Description || ''}</p></div>`;
+      
+      // Pridedame .cat-count su suskaičiuotu filmų kiekiu
+      a.innerHTML = `
+        <div class="cat-content">
+          <h2>${cat.Name} <span class="cat-count">(${movieCount})</span></h2>
+          <p>${cat.Description || ''}</p>
+        </div>
+      `;
+      
       container.appendChild(a);
       
       if (index < categories.length - 1) {
