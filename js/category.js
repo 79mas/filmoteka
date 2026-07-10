@@ -9,7 +9,6 @@ async function init() {
   const descEl = document.getElementById('category-description');
 
   try {
-    // 1. Ištraukiame kategorijos pavadinimą ir aprašymą
     const categories = await fetchAPI('getCategories');
     const currentCat = categories.find(c => String(c.ID) === String(catId));
     if (currentCat) {
@@ -19,13 +18,11 @@ async function init() {
       titleEl.textContent = 'Kategorija';
     }
 
-    // 2. Ištraukiame ir filtruojame filmus
     const allMovies = await fetchAPI('getMovies');
     const catMovies = allMovies
       .filter(m => String(m.Category) === String(catId))
       .sort((a, b) => String(a.OriginalTitle).localeCompare(String(b.OriginalTitle)));
 
-    // Tuščios būsenos patikrinimas
     if (catMovies.length === 0) {
       container.classList.add('hidden');
       emptyState.classList.remove('hidden');
@@ -38,19 +35,21 @@ async function init() {
       a.href = `movie.html?id=${m.ID}&category=${catId}`;
       a.className = 'card';
       
-      // Formuojame audio/titrų tekstą pagal logiką
-      let audioSubs = [];
-      if (m.Dubbing) audioSubs.push(m.Dubbing);
-      if (m.Subtitles) audioSubs.push(m.Subtitles);
-      let audioSubsText = audioSubs.length > 0 ? audioSubs.join('+') + '; ' : '';
+      let dubCode = m.Dubbing ? m.Dubbing.split(',')[0].trim().toLowerCase() : '';
+      let subCode = m.Subtitles ? m.Subtitles.split(',')[0].trim().toLowerCase() : '';
+
+      let flagBg = dubCode ? `<div class="card-bg-flag" style="background-image: url('images/logos/flag_${dubCode}.svg');"></div>` : '';
+      let subHtml = subCode ? `<img src="images/logos/flag_${subCode}.svg" class="inline-flag"> subtitrai, ` : '';
       
-      // Struktūra: Title EN Title LT // Kalba+Titrai; Žanras
+      let genreYear = [m.Genre, m.Year].filter(Boolean).join(' ');
+      
       a.innerHTML = `
-        <div class="list-title">
-          <b>${m.OriginalTitle}</b> 
-          ${m.LithuanianTitle ? `<span class="list-title-lt">${m.LithuanianTitle}</span>` : ''}
+        ${flagBg}
+        <div class="card-content">
+          <div class="list-title ellipsis">${m.OriginalTitle || ''}</div>
+          <div class="list-title-lt ellipsis">${m.LithuanianTitle || ''}</div>
+          <div class="list-meta ellipsis">${subHtml}${genreYear}</div>
         </div>
-        <div class="list-genre">// ${audioSubsText}${m.Genre || ''}</div>
       `;
       container.appendChild(a);
     });
