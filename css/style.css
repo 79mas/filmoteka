@@ -35,41 +35,45 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 .category-divider { height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%); margin: 24px 0; }
 .section-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 24px 0; border: none; }
 
-/* KORTELĖS (SĄRAŠAMS) */
+/* KORTELĖS BAZĖ (Be padding'o, kad fono paveikslėlis siektų kraštus) */
 .card {
   display: block;
   background: var(--surface-color);
-  padding: 16px;
   border-radius: 12px;
   margin-bottom: 12px;
   border: 1px solid rgba(255,255,255,0.03);
   position: relative;
   overflow: hidden;
 }
-.card h2 { font-size: 18px; color: var(--text-primary); margin-bottom: 4px; }
-.card p { font-size: 13px; color: var(--text-secondary); }
 
-/* Vėliavėlės fonas dešinėje pusėje (~30% pločio, 100% aukščio) */
+/* Teksto konteineris Pradinio puslapio kortelėms */
+.cat-content {
+  padding: 16px;
+}
+.cat-content h2 { font-size: 18px; color: var(--text-primary); margin-bottom: 4px; }
+.cat-content p { font-size: 13px; color: var(--text-secondary); }
+
+/* Vėliavėlės fonas dešinėje pusėje (~35% pločio, 100% aukščio) */
 .card-bg-flag {
   position: absolute;
   top: 0; right: 0; bottom: 0;
-  width: 35%; /* Skiriame 35% erdvės, kad tilptų ir gradientas */
+  width: 35%; 
   background-size: cover;
   background-position: right center;
   background-repeat: no-repeat;
-  /* Kaukė: pačiame kairiajame šio bloko krašte - skaidru, viduryje ryškėja, dešinėje 100% natūrali spalva */
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 60%);
-  mask-image: linear-gradient(to right, transparent 0%, black 60%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 50%);
+  mask-image: linear-gradient(to right, transparent 0%, black 50%);
   z-index: 1;
 }
 
-/* Kortelės tekstas pritaikytas su šešėliu */
+/* Teksto konteineris Kategorijų (filmų) puslapio kortelėms */
 .card-content { 
   position: relative; 
   z-index: 2; 
   text-align: left; 
-  width: 75%; /* Apribojame teksto plotį, kad mažiau liptų ant vėliavos */
-  text-shadow: 0 1px 4px rgba(0,0,0,0.85); /* Šešėlis įskaitomumui */
+  width: 80%; 
+  padding: 16px; 
+  text-shadow: 0 1px 4px rgba(0,0,0,0.85); 
 }
 
 /* KATEGORIJŲ SĄRAŠO (FILMŲ) STILIAI - 3 EILUTĖS */
