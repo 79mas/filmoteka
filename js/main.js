@@ -7,17 +7,21 @@ async function init() {
   const siteDesc = document.getElementById('site-description');
   
   try {
-    // Siunčiame tris užklausas vienu metu: Konfigūracija, Kategorijos, Filmai
     const [config, categories, allMovies] = await Promise.all([
       fetchAPI('getConfig'),
       fetchAPI('getCategories'),
       fetchAPI('getMovies')
     ]);
     
-    // Atnaujiname svetainės pavadinimą ir aprašymą iš Google Sheets
     if (siteTitle && config.site_title) siteTitle.textContent = config.site_title;
     if (siteDesc && config.site_description) siteDesc.textContent = config.site_description;
     
+    categories.unshift({
+      ID: 'all',
+      Name: 'Visi filmai',
+      Description: 'Pilnas visų kolekcijoje esančių filmų sąrašas.'
+    });
+
     if (!categories || categories.length === 0) {
       container.classList.add('hidden');
       emptyState.classList.remove('hidden');
@@ -26,7 +30,9 @@ async function init() {
     
     container.innerHTML = '';
     categories.forEach((cat, index) => {
-      const movieCount = allMovies.filter(m => String(m.Category) === String(cat.ID)).length;
+      const movieCount = cat.ID === 'all' 
+        ? allMovies.length 
+        : allMovies.filter(m => String(m.Category) === String(cat.ID)).length;
       
       const a = document.createElement('a');
       a.href = `category.html?id=${cat.ID}`;
