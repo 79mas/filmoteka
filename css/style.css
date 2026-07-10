@@ -49,26 +49,34 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 .card h2 { font-size: 18px; color: var(--text-primary); margin-bottom: 4px; }
 .card p { font-size: 13px; color: var(--text-secondary); }
 
-/* Vėliavėlės fonas dešinėje pusėje (gradientinis perėjimas) */
+/* Vėliavėlės fonas dešinėje pusėje (~30% pločio, 100% aukščio) */
 .card-bg-flag {
   position: absolute;
   top: 0; right: 0; bottom: 0;
-  width: 25%;
+  width: 35%; /* Skiriame 35% erdvės, kad tilptų ir gradientas */
   background-size: cover;
   background-position: right center;
   background-repeat: no-repeat;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 100%);
-  mask-image: linear-gradient(to right, transparent 0%, black 100%);
-  opacity: 0.35;
+  /* Kaukė: pačiame kairiajame šio bloko krašte - skaidru, viduryje ryškėja, dešinėje 100% natūrali spalva */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 60%);
+  mask-image: linear-gradient(to right, transparent 0%, black 60%);
   z-index: 1;
 }
-.card-content { position: relative; z-index: 2; text-align: left; width: 85%; }
+
+/* Kortelės tekstas pritaikytas su šešėliu */
+.card-content { 
+  position: relative; 
+  z-index: 2; 
+  text-align: left; 
+  width: 75%; /* Apribojame teksto plotį, kad mažiau liptų ant vėliavos */
+  text-shadow: 0 1px 4px rgba(0,0,0,0.85); /* Šešėlis įskaitomumui */
+}
 
 /* KATEGORIJŲ SĄRAŠO (FILMŲ) STILIAI - 3 EILUTĖS */
 .list-title { font-weight: 600; font-size: 16px; color: #ffffff; text-align: left; }
 .list-title-lt { font-size: 13px; color: var(--accent-color); font-weight: 500; margin-top: 2px; text-align: left; }
 .list-meta { font-size: 13px; color: var(--text-secondary); margin-top: 2px; display: flex; align-items: center; text-align: left; }
-.inline-flag { width: 16px; height: 11px; border-radius: 2px; object-fit: cover; margin-right: 6px; }
+.inline-flag { width: 16px; height: 11px; border-radius: 2px; object-fit: cover; margin-right: 6px; box-shadow: 0 0 2px rgba(0,0,0,0.5); }
 
 .movie-header-top { display: none !important; }
 
