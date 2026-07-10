@@ -46,7 +46,7 @@ async function init() {
   }
 }
 
-// Pagalbinė funkcija SVG ikonos dažymui per CSS Mask (naudojama tik ic_info_...)
+// SVG ikonos dažymui per CSS Mask (tik ic_info_...)
 const getInfoIconHtml = (iconName) => {
   return `<span class="icon-yellow" style="-webkit-mask-image: url('images/logos/${iconName}'); mask-image: url('images/logos/${iconName}');"></span>`;
 };
@@ -92,7 +92,8 @@ function renderMovie(m) {
 
   let descHtml = m.Description ? `<div class="description-text">${m.Description}</div>` : '';
 
-  let ratingDateStr = m.RatingDate ? m.RatingDate : new Date().toISOString().split('T')[0];
+  // Nupjauname laiką (paliekame tik pirmus 10 simbolių YYYY-MM-DD)
+  let ratingDateStr = m.RatingDate ? String(m.RatingDate).substring(0, 10) : new Date().toISOString().split('T')[0];
 
   const rList = [
       { id: 'imdb', icon: 'ic_rate_imdb.svg', val: m.IMDb },
@@ -120,9 +121,13 @@ function renderMovie(m) {
           if (ampersandIndex !== -1) embedUrl = embedUrl.substring(0, ampersandIndex);
       }
       
+      // Atnaujintas treilerio blokas su papildomu tekstu
       trailerHtml = `
           <div class="trailer-placeholder" id="yt-placeholder" data-url="${embedUrl}">
-             <img src="images/logos/ic_media_play.svg" alt="Play" style="width: 64px; height: 64px;">
+             <div class="trailer-content">
+                <span class="trailer-label">Žiūrėti filmo anonsą per</span>
+                <img src="images/logos/ic_media_play.svg" alt="Play" class="trailer-play-icon">
+             </div>
           </div>
       `;
   }
@@ -249,14 +254,16 @@ function setupComments() {
   const modal = document.getElementById('comment-modal');
   const openBtn = document.getElementById('open-comment');
   const successMsg = document.getElementById('comment-success');
-  const actionsBox = document.querySelector('.modal-actions');
+  const actionBtns = document.getElementById('modal-action-buttons');
+  const okBtn = document.getElementById('comment-ok');
   const nameInput = document.getElementById('comment-name');
   const textInput = document.getElementById('comment-text');
 
   if (openBtn) openBtn.onclick = () => {
     modal.classList.remove('hidden');
     successMsg.classList.add('hidden');
-    actionsBox.classList.remove('hidden');
+    okBtn.classList.add('hidden');
+    actionBtns.classList.remove('hidden');
     nameInput.classList.remove('hidden');
     textInput.classList.remove('hidden');
     nameInput.value = '';
@@ -277,15 +284,19 @@ function setupComments() {
     
     await postAPI({ action: 'addComment', movieId, name, comment: text });
     
-    actionsBox.classList.add('hidden');
+    actionBtns.classList.add('hidden');
     nameInput.classList.add('hidden');
     textInput.classList.add('hidden');
     successMsg.classList.remove('hidden');
+    okBtn.classList.remove('hidden');
     
     btn.disabled = false;
     btn.textContent = "Išsiųsti";
-    
-    setTimeout(() => { modal.classList.add('hidden'); }, 3000);
+  };
+
+  // Uždaryti langą paspaudus "Gerai" po sėkmingo siuntimo
+  okBtn.onclick = () => {
+    modal.classList.add('hidden');
   };
 }
 
