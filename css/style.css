@@ -35,7 +35,7 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 .category-divider { height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%); margin: 24px 0; }
 .section-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 24px 0; border: none; }
 
-/* KORTELĖS BAZĖ (Be padding'o, kad fono paveikslėlis siektų kraštus) */
+/* KORTELĖS BAZĖ */
 .card {
   display: block;
   background: var(--surface-color);
@@ -52,6 +52,7 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 }
 .cat-content h2 { font-size: 18px; color: var(--text-primary); margin-bottom: 4px; }
 .cat-content p { font-size: 13px; color: var(--text-secondary); }
+.cat-count { font-weight: 400; font-size: 14px; color: var(--text-secondary); margin-left: 6px; }
 
 /* Vėliavėlės fonas dešinėje pusėje (~35% pločio, 100% aukščio) */
 .card-bg-flag {
