@@ -23,8 +23,16 @@ const emptyCommentPhrases = [
 
 async function init() {
   try {
-    // NAUJIENA: Iškart imame iš kešo jau fone atsiųstus filmus! PUSLAPIS KRAUNAS INSTANT!
-    const allMovies = await fetchAPI('getMovies');
+    const rawMovies = await fetchAPI('getMovies');
+    
+    // Front-end sanitizacija: paverčiame tuščias kategorijas į 0
+    const allMovies = rawMovies.map(m => {
+      if (m.Category === undefined || m.Category === null || String(m.Category).trim() === '') {
+        m.Category = 0;
+      }
+      return m;
+    });
+
     const movie = allMovies.find(m => String(m.ID) === String(movieId));
     
     if (!movie) {
@@ -41,13 +49,11 @@ async function init() {
     const prevId = movieIndex > 0 ? catMovies[movieIndex - 1].ID : null;
     const nextId = movieIndex < catMovies.length - 1 ? catMovies[movieIndex + 1].ID : null;
 
-    // Pradinis renderis su placeholderiais, kol fone atkeliaus tikri reitingai
     movie.CommunityRating = '...';
     renderMovie(movie);
     setupBottomBar(prevId, nextId);
     setupLightbox();
 
-    // Fone ištraukiame interakcijas (komentarus, reitingus)
     fetchAPI('getInteractions', { movieId }).then(interactions => {
       const commVal = document.getElementById('community-rating-val');
       if (commVal) commVal.textContent = interactions.likes || 0;
@@ -74,24 +80,31 @@ function renderMovie(m) {
   
   const paddedId = String(m.ID).padStart(4, '0');
 
+  let metaItems = [];
+  const addMeta = (icon, val) => {
+      if (val && String(val).trim() !== '-' && String(val).trim() !== '') {
+          metaItems.push(`<div class="mh-meta-item">${getInfoIconHtml(icon)} ${val}</div>`);
+      }
+  };
+  addMeta('ic_info_language.svg', m.Dubbing);
+  addMeta('ic_info_subs.svg', m.Subtitles);
+  addMeta('ic_info_year.svg', m.Year);
+  addMeta('ic_info_country.svg', m.Country);
+
+  let metaGridHtml = metaItems.length > 0 ? `<div class="mh-meta-grid">${metaItems.join('')}</div>` : '';
+
   const heroHtml = `
     <div class="movie-header-grid">
       <img src="images/posters/mov_${paddedId}.png" class="mh-poster" id="main-poster" alt="${m.OriginalTitle || ''}" onerror="this.onerror=null; this.src='images/mov_0000.png';">
       <div class="mh-info">
         <div class="mh-title-en">${m.OriginalTitle || ''}</div>
         ${m.LithuanianTitle ? `<div class="mh-title-lt">${m.LithuanianTitle}</div>` : ''}
-        
-        <div class="mh-meta-grid">
-           <div class="mh-meta-item">${getInfoIconHtml('ic_info_language.svg')} ${m.Dubbing || '-'}</div>
-           <div class="mh-meta-item">${getInfoIconHtml('ic_info_subs.svg')} ${m.Subtitles || '-'}</div>
-           <div class="mh-meta-item">${getInfoIconHtml('ic_info_year.svg')} ${m.Year || '-'}</div>
-           <div class="mh-meta-item">${getInfoIconHtml('ic_info_country.svg')} ${m.Country || '-'}</div>
-        </div>
+        ${metaGridHtml}
       </div>
     </div>
   `;
 
-  let transformHtml = m.TransformationStage ? `
+  let transformHtml = (m.TransformationStage && String(m.TransformationStage).trim() !== '-') ? `
     <div class="transformation-box">
       <div class="transformation-box-label">Transformacijos etapas</div>
       ${m.TransformationStage}
@@ -104,7 +117,7 @@ function renderMovie(m) {
       { label: 'Kompozitorius', icon: 'ic_info_composer.svg', val: m.Composer },
       { label: 'Operatorius', icon: 'ic_info_camera.svg', val: m.Cinematographer },
       { label: 'Aktoriai', icon: 'ic_info_cast.svg', val: m.MainActors }
-  ].filter(i => i.val);
+  ].filter(i => i.val && String(i.val).trim() !== '-' && String(i.val).trim() !== '');
   
   let crewHtml = crewInfo.length > 0 ? crewInfo.map(i => `
       <div class="info-row">
@@ -113,7 +126,7 @@ function renderMovie(m) {
       </div>
   `).join('') : '';
 
-  let descHtml = m.Description ? `<div class="description-text">${m.Description}</div>` : '';
+  let descHtml = (m.Description && String(m.Description).trim() !== '-' && String(m.Description).trim() !== '') ? `<div class="description-text">${m.Description}</div>` : '';
 
   let ratingDateStr = m.RatingDate ? String(m.RatingDate).substring(0, 10) : new Date().toISOString().split('T')[0];
 
@@ -132,10 +145,10 @@ function renderMovie(m) {
   `).join('');
   let ratingsBlock = `<div class="ratings-container">${ratingsHtml}</div><div class="ratings-date">Atnaujinta: ${ratingDateStr}</div>`;
 
-  let imdbLinkHtml = m.IMDbLink ? `<a href="${m.IMDbLink}" target="_blank" class="btn-outline" style="text-decoration:none;"><img src="images/logos/ic_rate_imdb.svg" style="height:20px;"> peržiūrėti filmo IMDb puslapį.</a>` : '';
+  let imdbLinkHtml = m.IMDbLink && String(m.IMDbLink).trim() !== '-' ? `<a href="${m.IMDbLink}" target="_blank" class="btn-outline" style="text-decoration:none;"><img src="images/logos/ic_rate_imdb.svg" style="height:20px;"> peržiūrėti filmo IMDb puslapį.</a>` : '';
 
   let trailerHtml = '';
-  if (m.TrailerYouTube) {
+  if (m.TrailerYouTube && String(m.TrailerYouTube).trim() !== '-') {
       let embedUrl = m.TrailerYouTube;
       if (embedUrl.includes('watch?v=')) {
           embedUrl = embedUrl.replace('watch?v=', 'embed/');
