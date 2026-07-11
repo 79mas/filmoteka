@@ -44,8 +44,9 @@ async function init() {
       let dubCode = m.Dubbing ? m.Dubbing.split(',')[0].trim().toLowerCase() : '';
       let subCode = m.Subtitles ? m.Subtitles.split(',')[0].trim().toLowerCase() : '';
 
-      let flagBg = dubCode ? `<div class="card-bg-flag" style="background-image: url('images/logos/flag_${dubCode}.svg');"></div>` : '';
-      let subHtml = subCode ? `<img src="images/logos/flag_${subCode}.svg" class="inline-flag"> subtitrai, ` : '';
+      // Vėliavėlė atvaizduojama kaip natūralus paveikslėlis
+      let flagBg = dubCode ? `<img src="images/logos/flag_${dubCode}.svg" class="card-bg-flag" onerror="this.style.display='none'">` : '';
+      let subHtml = subCode ? `<img src="images/logos/flag_${subCode}.svg" class="inline-flag" onerror="this.style.display='none'"> subtitrai, ` : '';
       
       let genreYear = [m.Genre, m.Year].filter(Boolean).join(' ');
       
