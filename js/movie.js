@@ -25,7 +25,6 @@ async function init() {
   try {
     const rawMovies = await fetchAPI('getMovies');
     
-    // Front-end sanitizacija: paverčiame tuščias kategorijas į 0
     const allMovies = rawMovies.map(m => {
       if (m.Category === undefined || m.Category === null || String(m.Category).trim() === '') {
         m.Category = 0;
@@ -81,13 +80,15 @@ function renderMovie(m) {
   const paddedId = String(m.ID).padStart(4, '0');
 
   let metaItems = [];
-  const addMeta = (icon, val) => {
-      if (val && String(val).trim() !== '-' && String(val).trim() !== '') {
-          metaItems.push(`<div class="mh-meta-item">${getInfoIconHtml(icon)} ${val}</div>`);
+  // ATNAUJINTA: isMandatory argumentas leidžia priverstinai palikti laukelį (Subtitrams)
+  const addMeta = (icon, val, isMandatory = false) => {
+      if (isMandatory || (val && String(val).trim() !== '-' && String(val).trim() !== '')) {
+          let displayVal = (val && String(val).trim() !== '') ? val : '-';
+          metaItems.push(`<div class="mh-meta-item">${getInfoIconHtml(icon)} ${displayVal}</div>`);
       }
   };
   addMeta('ic_info_language.svg', m.Dubbing);
-  addMeta('ic_info_subs.svg', m.Subtitles);
+  addMeta('ic_info_subs.svg', m.Subtitles, true); // Subtitrai privalomi filmo puslapyje!
   addMeta('ic_info_year.svg', m.Year);
   addMeta('ic_info_country.svg', m.Country);
 
