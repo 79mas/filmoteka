@@ -50,16 +50,14 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 .cat-content p { font-size: 13px; color: var(--text-secondary); }
 .cat-count { font-weight: 400; font-size: 14px; color: var(--text-secondary); margin-left: 6px; }
 
-/* ATNAUJINTA VĖLIAVOS LOGIKA: Griežtas 100% aukštis, natūralus plotis (auto) ir tiksli kaukė */
 .card-bg-flag {
   position: absolute;
   top: 0; 
   right: 0; 
   bottom: 0;
   height: 100%;
-  width: auto; /* Išlaiko tavo originalaus SVG artboard'o proporcijas */
+  width: auto;
   z-index: 1;
-  /* Kaukė prasideda tiksliai nuo paveikslėlio kairės kraštinės (0%) ir tampa ryški per 30% paveikslėlio pločio */
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 30%);
   mask-image: linear-gradient(to right, transparent 0%, black 30%);
 }
@@ -68,15 +66,17 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
   position: relative; 
   z-index: 2; 
   text-align: left; 
-  width: 75%; 
+  width: 70%; 
   padding: 16px; 
   text-shadow: 0 1px 4px rgba(0,0,0,0.85); 
 }
 
-.list-title { font-weight: 600; font-size: 16px; color: #ffffff; text-align: left; }
-.list-title-lt { font-size: 13px; color: var(--accent-color); font-weight: 500; margin-top: 2px; text-align: left; }
-.list-meta { font-size: 13px; color: var(--text-secondary); margin-top: 2px; display: flex; align-items: center; text-align: left; }
-.inline-flag { width: 16px; height: 11px; border-radius: 2px; object-fit: cover; margin-right: 6px; box-shadow: 0 0 2px rgba(0,0,0,0.5); }
+/* ATNAUJINTA: Visoms trims eilutėms garantuojamas taisyklingas kirpimas su daugtaškiu */
+.list-title { font-weight: 600; font-size: 16px; color: #ffffff; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.list-title-lt { font-size: 13px; color: var(--accent-color); font-weight: 500; margin-top: 2px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.list-meta { font-size: 13px; color: var(--text-secondary); margin-top: 2px; display: block; text-align: left; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.inline-flag { width: 16px; height: 11px; border-radius: 2px; object-fit: cover; margin-right: 6px; box-shadow: 0 0 2px rgba(0,0,0,0.5); vertical-align: middle; margin-top: -2px; }
 
 .movie-header-top { display: none !important; }
 
