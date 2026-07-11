@@ -50,15 +50,16 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 .cat-content p { font-size: 13px; color: var(--text-secondary); }
 .cat-count { font-weight: 400; font-size: 14px; color: var(--text-secondary); margin-left: 6px; }
 
+/* NAUJIENA: Vėliava dabar atvaizduojama kaip tikras img elementas (jokių background iškraipymų) */
 .card-bg-flag {
   position: absolute;
   top: 0; right: 0; bottom: 0;
   width: 40%; 
-  background-size: auto 100%;
-  background-position: right center;
-  background-repeat: no-repeat;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 60%);
-  mask-image: linear-gradient(to right, transparent 0%, black 60%);
+  height: 100%;
+  object-fit: cover; /* Išlaiko natūralias tavo artboard proporcijas be tempimo */
+  object-position: right center;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 50%);
+  mask-image: linear-gradient(to right, transparent 0%, black 50%);
   z-index: 1;
 }
 
@@ -77,7 +78,6 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 .inline-flag { width: 16px; height: 11px; border-radius: 2px; object-fit: cover; margin-right: 6px; box-shadow: 0 0 2px rgba(0,0,0,0.5); }
 
 .movie-header-top { display: none !important; }
-
 .movie-header-grid { display: flex; gap: 16px; margin-bottom: 24px; }
 .mh-poster { width: 130px; border-radius: 8px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.4); object-fit: cover; }
 .mh-info { display: flex; flex-direction: column; justify-content: flex-start; gap: 8px; width: 100%; overflow: hidden; }
@@ -129,10 +129,28 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 
 .description-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; text-align: justify; }
 
+/* NAUJIENA: Treilerio blokas užimantis lygiai 45% (pusę) aukščio */
 .trailer-placeholder { width: 100%; aspect-ratio: 16/9; background-color: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
-.trailer-content { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 50%; gap: 12px; }
-.trailer-label { color: var(--text-secondary); font-size: 14px; font-weight: 500; text-align: center; }
-.trailer-play-icon { width: 33%; height: auto; max-width: 80px; transition: transform 0.2s; }
+.trailer-content { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  height: 45%; 
+  gap: 12px; 
+}
+.trailer-label { 
+  color: var(--text-secondary); 
+  font-size: clamp(12px, 3.5vw, 16px); 
+  font-weight: 500; 
+  text-align: center; 
+}
+.trailer-play-icon { 
+  height: 100%; 
+  width: auto; 
+  max-height: 55px; 
+  transition: transform 0.2s; 
+}
 .trailer-placeholder:hover .trailer-play-icon { transform: scale(1.1); }
 
 .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
