@@ -23,22 +23,39 @@ const emptyCommentPhrases = [
 
 async function init() {
   try {
-    const data = await fetchAPI('getMovie', { id: movieId, category: catId });
-    if (data.error || !data.movie) {
+    // NAUJIENA: Iškart imame iš kešo jau fone atsiųstus filmus! PUSLAPIS KRAUNAS INSTANT!
+    const allMovies = await fetchAPI('getMovies');
+    const movie = allMovies.find(m => String(m.ID) === String(movieId));
+    
+    if (!movie) {
       document.getElementById('movie-content').classList.add('hidden');
       document.getElementById('empty-state').classList.remove('hidden');
       return;
     }
 
-    const interactions = await fetchAPI('getInteractions', { movieId });
-    data.movie.CommunityRating = interactions.likes || 0;
+    let catMovies = catId === 'all'
+      ? [...allMovies].sort((a, b) => String(a.OriginalTitle).localeCompare(String(b.OriginalTitle)))
+      : allMovies.filter(m => String(m.Category) === String(catId)).sort((a, b) => String(a.OriginalTitle).localeCompare(String(b.OriginalTitle)));
 
-    renderMovie(data.movie);
-    setupBottomBar(data.prevId, data.nextId);
-    renderInteractions(interactions);
-    setupLikeBtn();
-    setupComments();
+    const movieIndex = catMovies.findIndex(m => String(m.ID) === String(movieId));
+    const prevId = movieIndex > 0 ? catMovies[movieIndex - 1].ID : null;
+    const nextId = movieIndex < catMovies.length - 1 ? catMovies[movieIndex + 1].ID : null;
+
+    // Pradinis renderis su placeholderiais, kol fone atkeliaus tikri reitingai
+    movie.CommunityRating = '...';
+    renderMovie(movie);
+    setupBottomBar(prevId, nextId);
     setupLightbox();
+
+    // Fone ištraukiame interakcijas (komentarus, reitingus)
+    fetchAPI('getInteractions', { movieId }).then(interactions => {
+      const commVal = document.getElementById('community-rating-val');
+      if (commVal) commVal.textContent = interactions.likes || 0;
+      renderInteractions(interactions);
+      setupLikeBtn();
+      setupComments();
+    }).catch(err => console.log("Nepavyko užkrauti interakcijų", err));
+
   } catch (e) { 
     console.error(e); 
     document.getElementById('movie-content').classList.add('hidden');
