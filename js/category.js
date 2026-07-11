@@ -23,7 +23,15 @@ async function init() {
       titleEl.textContent = 'Kategorija';
     }
 
-    const allMovies = await fetchAPI('getMovies');
+    const rawMovies = await fetchAPI('getMovies');
+    
+    // Front-end sanitizacija: paverčiame tuščias kategorijas į 0
+    const allMovies = rawMovies.map(m => {
+      if (m.Category === undefined || m.Category === null || String(m.Category).trim() === '') {
+        m.Category = 0;
+      }
+      return m;
+    });
     
     const catMovies = catId === 'all'
       ? allMovies.sort((a, b) => String(a.OriginalTitle).localeCompare(String(b.OriginalTitle)))
@@ -41,21 +49,22 @@ async function init() {
       a.href = `movie.html?id=${m.ID}&category=${catId}`;
       a.className = 'card';
       
-      // IŠMANUS ATNAUJINIMAS: Paimame visą pirmąjį kalbos bloką iki kablelio fono vėliavai (pvz., "LT-RU, EN" -> "lt-ru")
       let dubCode = m.Dubbing ? m.Dubbing.split(',')[0].trim().toLowerCase() : '';
-      let flagBg = dubCode ? `<img src="images/logos/flag_${dubCode}.svg" class="card-bg-flag" onerror="this.style.display='none'">` : '';
+      let flagBg = (dubCode && dubCode !== '-') ? `<img src="images/logos/flag_${dubCode}.svg" class="card-bg-flag" onerror="this.style.display='none'">` : '';
       
-      // IŠMANUS ATNAUJINIMAS SUBTITRAMS: Išskaidome visas kalbas ir sugeneruojame vėliavėles (suveiks ir su "lt-ru")
+      // SUTVARKITI SUBTITRAI: Jei tuščia arba "-", nerodome nieko
       let subHtml = '';
-      if (m.Subtitles) {
-        const subCodes = m.Subtitles.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+      if (m.Subtitles && String(m.Subtitles).trim() !== '-' && String(m.Subtitles).trim() !== '') {
+        const subCodes = String(m.Subtitles).split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
         if (subCodes.length > 0) {
           const flagsHtml = subCodes.map(code => `<img src="images/logos/flag_${code}.svg" class="inline-flag" onerror="this.style.display='none'">`).join('');
           subHtml = `${flagsHtml} subtitrai, `;
         }
       }
       
-      let genreYear = [m.Genre, m.Year].filter(Boolean).join(' ');
+      const cleanGenre = (m.Genre && String(m.Genre).trim() !== '-') ? m.Genre : '';
+      const cleanYear = (m.Year && String(m.Year).trim() !== '-') ? m.Year : '';
+      let genreYear = [cleanGenre, cleanYear].filter(Boolean).join(' ');
       
       a.innerHTML = `
         ${flagBg}
