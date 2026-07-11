@@ -7,7 +7,6 @@ async function init() {
   const siteDesc = document.getElementById('site-description');
   
   try {
-    // 1 ŽINGSNIS: Užkrauname TIK konfigūraciją ir kategorijas (tai trunka milisekundes)
     const [config, categories] = await Promise.all([
       fetchAPI('getConfig'),
       fetchAPI('getCategories')
@@ -34,7 +33,6 @@ async function init() {
       a.href = `category.html?id=${cat.ID}`;
       a.className = 'card';
       
-      // Laikinai rodome (...) kol fone parsiųs filmus
       a.innerHTML = `
         <div class="cat-content">
           <h2>${cat.Name} <span class="cat-count" id="count-${cat.ID}">(...)</span></h2>
@@ -51,8 +49,15 @@ async function init() {
       }
     });
 
-    // 2 ŽINGSNIS: Fone atsisiunčiame VISUS filmus (nepristabdant lankytojo UI!)
-    fetchAPI('getMovies').then(allMovies => {
+    // Fone atsisiunčiame filmus ir pataisome tuščias kategorijas į 0
+    fetchAPI('getMovies').then(rawMovies => {
+      const allMovies = rawMovies.map(m => {
+        if (m.Category === undefined || m.Category === null || String(m.Category).trim() === '') {
+          m.Category = 0;
+        }
+        return m;
+      });
+
       categories.forEach(cat => {
         const countEl = document.getElementById(`count-${cat.ID}`);
         if(countEl) {
