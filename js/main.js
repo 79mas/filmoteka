@@ -7,10 +7,10 @@ async function init() {
   const siteDesc = document.getElementById('site-description');
   
   try {
-    const [config, categories, allMovies] = await Promise.all([
+    // 1 ŽINGSNIS: Užkrauname TIK konfigūraciją ir kategorijas (tai trunka milisekundes)
+    const [config, categories] = await Promise.all([
       fetchAPI('getConfig'),
-      fetchAPI('getCategories'),
-      fetchAPI('getMovies')
+      fetchAPI('getCategories')
     ]);
     
     if (siteTitle && config.site_title) siteTitle.textContent = config.site_title;
@@ -30,17 +30,14 @@ async function init() {
     
     container.innerHTML = '';
     categories.forEach((cat, index) => {
-      const movieCount = cat.ID === 'all' 
-        ? allMovies.length 
-        : allMovies.filter(m => String(m.Category) === String(cat.ID)).length;
-      
       const a = document.createElement('a');
       a.href = `category.html?id=${cat.ID}`;
       a.className = 'card';
       
+      // Laikinai rodome (...) kol fone parsiųs filmus
       a.innerHTML = `
         <div class="cat-content">
-          <h2>${cat.Name} <span class="cat-count">(${movieCount})</span></h2>
+          <h2>${cat.Name} <span class="cat-count" id="count-${cat.ID}">(...)</span></h2>
           <p>${cat.Description || ''}</p>
         </div>
       `;
@@ -53,6 +50,20 @@ async function init() {
         container.appendChild(div);
       }
     });
+
+    // 2 ŽINGSNIS: Fone atsisiunčiame VISUS filmus (nepristabdant lankytojo UI!)
+    fetchAPI('getMovies').then(allMovies => {
+      categories.forEach(cat => {
+        const countEl = document.getElementById(`count-${cat.ID}`);
+        if(countEl) {
+          const movieCount = cat.ID === 'all' 
+            ? allMovies.length 
+            : allMovies.filter(m => String(m.Category) === String(cat.ID)).length;
+          countEl.textContent = `(${movieCount})`;
+        }
+      });
+    }).catch(err => console.log("Fonas: Nepavyko atsiųsti filmų", err));
+
   } catch (e) {
     container.classList.add('hidden');
     emptyState.classList.remove('hidden');
