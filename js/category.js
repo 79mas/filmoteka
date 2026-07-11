@@ -41,10 +41,10 @@ async function init() {
       a.href = `movie.html?id=${m.ID}&category=${catId}`;
       a.className = 'card';
       
-      let dubCode = m.Dubbing ? m.Dubbing.split(',')[0].trim().toLowerCase() : '';
+      // PATOBULINTA LOGIKA: Paimame tik pačius pirmus 2 simbolius iš Dubbing stulpelio fono vėliavai (pvz., "LT, EN" -> "lt")
+      let dubCode = m.Dubbing ? m.Dubbing.trim().substring(0, 2).toLowerCase() : '';
       let subCode = m.Subtitles ? m.Subtitles.split(',')[0].trim().toLowerCase() : '';
 
-      // Vėliavėlė atvaizduojama kaip natūralus paveikslėlis
       let flagBg = dubCode ? `<img src="images/logos/flag_${dubCode}.svg" class="card-bg-flag" onerror="this.style.display='none'">` : '';
       let subHtml = subCode ? `<img src="images/logos/flag_${subCode}.svg" class="inline-flag" onerror="this.style.display='none'"> subtitrai, ` : '';
       
