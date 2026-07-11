@@ -41,12 +41,19 @@ async function init() {
       a.href = `movie.html?id=${m.ID}&category=${catId}`;
       a.className = 'card';
       
-      // PATOBULINTA LOGIKA: Paimame tik pačius pirmus 2 simbolius iš Dubbing stulpelio fono vėliavai (pvz., "LT, EN" -> "lt")
+      // Paimame tik pačius pirmus 2 simbolius iš Dubbing stulpelio fono vėliavai
       let dubCode = m.Dubbing ? m.Dubbing.trim().substring(0, 2).toLowerCase() : '';
-      let subCode = m.Subtitles ? m.Subtitles.split(',')[0].trim().toLowerCase() : '';
-
       let flagBg = dubCode ? `<img src="images/logos/flag_${dubCode}.svg" class="card-bg-flag" onerror="this.style.display='none'">` : '';
-      let subHtml = subCode ? `<img src="images/logos/flag_${subCode}.svg" class="inline-flag" onerror="this.style.display='none'"> subtitrai, ` : '';
+      
+      // ATNAUJINTA LOGIKA: Atpažįsta kelias subtitrų kalbas ir generuoja kelias vėliavas
+      let subHtml = '';
+      if (m.Subtitles) {
+        const subCodes = m.Subtitles.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+        if (subCodes.length > 0) {
+          const flagsHtml = subCodes.map(code => `<img src="images/logos/flag_${code}.svg" class="inline-flag" onerror="this.style.display='none'">`).join('');
+          subHtml = `${flagsHtml} subtitrai, `;
+        }
+      }
       
       let genreYear = [m.Genre, m.Year].filter(Boolean).join(' ');
       
