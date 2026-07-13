@@ -11,7 +11,6 @@ async function init() {
   try {
     const categories = await fetchAPI('getCategories');
     
-    // Sinchronizuojame virtualią kategoriją sąrašo pradžioje
     if (!categories.some(c => c.ID === 'all')) {
       categories.unshift({ Name: 'Visi filmai', Description: 'Pilnas visų kolekcijoje esančių filmų sąrašas.', ID: 'all' });
     }
@@ -25,12 +24,10 @@ async function init() {
       titleEl.textContent = 'Kategorija';
     }
 
-    // 5 PUNKTAS: Kategorijų puslapio navigacijos valdymas (No loop)
     setupCategoryNavigation(categories, currentCat);
 
     const rawMovies = await fetchAPI('getMovies');
     
-    // Front-end sanitizacija: tuščias grafas paverčiame į 0 kategoriją
     const allMovies = rawMovies.map(m => {
       if (m.Category === undefined || m.Category === null || String(m.Category).trim() === '') {
         m.Category = 0;
@@ -48,7 +45,6 @@ async function init() {
       return;
     }
 
-    // 7 PUNKTAS: Išsitraukiame peržiūrėtų filmų sąrašą iš sesijos atminties
     const viewedMovies = JSON.parse(sessionStorage.getItem('viewed_movies') || '[]');
 
     container.innerHTML = '';
@@ -56,19 +52,19 @@ async function init() {
       const a = document.createElement('a');
       a.href = `movie.html?id=${m.ID}&category=${catId}`;
       
-      // Jeigu filmo ID yra sesijos atmintyje, pridedame papildomą klasę .movie-viewed
       const isViewed = viewedMovies.includes(String(m.ID));
       a.className = isViewed ? 'card movie-viewed' : 'card';
       
       let dubCode = m.Dubbing ? m.Dubbing.split(',')[0].trim().toLowerCase() : '';
       let flagBg = (dubCode && dubCode !== '-') ? `<img src="images/logos/flag_${dubCode}.svg" class="card-bg-flag" onerror="this.style.display='none'">` : '';
       
+      // 2 PUNKTAS: Išimtas tekstas "subtitrai,". Dabar generuojamos tik vėliavėlės.
       let subHtml = '';
       if (m.Subtitles && String(m.Subtitles).trim() !== '-' && String(m.Subtitles).trim() !== '') {
         const subCodes = String(m.Subtitles).split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
         if (subCodes.length > 0) {
           const flagsHtml = subCodes.map(code => `<img src="images/logos/flag_${code}.svg" class="inline-flag" onerror="this.style.display='none'">`).join('');
-          subHtml = `${flagsHtml} subtitrai, `;
+          subHtml = `${flagsHtml} `;
         }
       }
       
