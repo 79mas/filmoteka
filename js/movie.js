@@ -11,7 +11,7 @@ let currentImageIndex = 0;
 const emptyCommentPhrases = [
   "Užfiksuota keista tyla komentarų skyriuje.",
   "Komentarų juosta šiuo metu vaidina tylų vaidmenį.",
-  "Čia galètent būti tavo kino kritikos debiutas.",
+  "Čia galėtų būti tavo kino kritikos debiutas.",
   "Niekas dar nepasakė: „blogas filmas“.",
   "Tuščia scena. Reikia pagrindinio veikėjo.",
   "Ši vieta laukia pirmosios recenzijos premjeros.",
@@ -40,7 +40,6 @@ async function init() {
       return;
     }
 
-    // 7 PUNKTAS: Vos tik sėkmingai atidarius filmą, įrašome jo ID į sesijos atmintį
     let viewedMovies = JSON.parse(sessionStorage.getItem('viewed_movies') || '[]');
     if (!viewedMovies.includes(String(movie.ID))) {
       viewedMovies.push(String(movie.ID));
@@ -75,8 +74,9 @@ async function init() {
   }
 }
 
+// 3 PUNKTAS: Ištaisyta sintaksė - pašalintos pavienės kabutės (''), kad mask-image nekeltų konfliktų naršyklėse
 const getInfoIconHtml = (iconName) => {
-  return `<span class="icon-yellow" style="-webkit-mask-image: url('images/logos/${iconName}'); mask-image: url('images/logos/${iconName}');"></span>`;
+  return `<span class="icon-yellow" style="-webkit-mask-image: url(images/logos/${iconName}); mask-image: url(images/logos/${iconName});"></span>`;
 };
 
 function renderMovie(m) {
@@ -94,7 +94,7 @@ function renderMovie(m) {
       }
   };
   addMeta('ic_info_language.svg', m.Dubbing);
-  addMeta('ic_info_subs.svg', m.Subtitles, true); // Privaloma filmo puslapyje
+  addMeta('ic_info_subs.svg', m.Subtitles, true);
   addMeta('ic_info_year.svg', m.Year);
   addMeta('ic_info_country.svg', m.Country);
 
@@ -133,14 +133,12 @@ function renderMovie(m) {
       </div>
   `).join('') : '';
 
-  // 4 PUNKTAS: Išskaidome ilgą aprašymą pastraipomis pagal naujos eilutės (\n) simbolį
   let descHtml = '';
   if (m.Description && String(m.Description).trim() !== '-' && String(m.Description).trim() !== '') {
     const paragraphs = m.Description.split('\n').map(p => p.trim()).filter(Boolean);
     descHtml = `<div class="description-text">${paragraphs.map(p => `<p>${p}</p>`).join('')}</div>`;
   }
 
-  // 2 ir 8 PUNKTAS: Surenkame Citatą ir Įdomų faktą į vieną bendrą rėmelį
   let quoteFactHtml = '';
   let hasQuote = m.Quote && String(m.Quote).trim() !== '-' && String(m.Quote).trim() !== '';
   let hasFact = m.Fact && String(m.Fact).trim() !== '-' && String(m.Fact).trim() !== '';
@@ -164,7 +162,6 @@ function renderMovie(m) {
     quoteFactHtml += `</div>`;
   }
 
-  // 3 PUNKTAS: Sunkiai iškovoti Apdovanojimai
   let awardsHtml = (m.Awards && String(m.Awards).trim() !== '-' && String(m.Awards).trim() !== '') ? `
     <div class="awards-box">
       ${getInfoIconHtml('ic_info_awards.svg')}
@@ -388,7 +385,6 @@ function setupLightbox() {
   
   function updateLightboxArrows() {
     if(!btnPrev || !btnNext) return;
-    // 6 PUNKTAS: Išjungiame rodykles pasiekus kraštus ir pritemdome jas vizualiai
     btnPrev.style.opacity = (currentImageIndex === 0) ? '0.15' : '1';
     btnNext.style.opacity = (currentImageIndex === galleryImages.length - 1) ? '0.15' : '1';
   }
