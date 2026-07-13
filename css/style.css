@@ -31,7 +31,6 @@ a { color: inherit; text-decoration: none; transition: opacity 0.2s; }
 a:hover, a:active { opacity: 0.8; }
 
 h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5px; }
-/* 1 PUNKTAS: Pradinio puslapio aprašymo atitraukimas ir lygiavimas */
 .page-description { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.6; text-align: left; text-indent: 24px; }
 .category-divider { height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%); margin: 24px 0; }
 .section-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 24px 0; border: none; }
@@ -48,7 +47,6 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 
 .cat-content { padding: 16px; }
 .cat-content h2 { font-size: 18px; color: var(--text-primary); margin-bottom: 4px; }
-/* 1 PUNKTAS: Kategorijų puslapio aprašymo atitraukimas ir lygiavimas */
 .cat-content p { font-size: 13px; color: var(--text-secondary); text-align: left; text-indent: 24px; }
 .cat-count { font-weight: 400; font-size: 14px; color: var(--text-secondary); margin-left: 6px; }
 
@@ -137,8 +135,9 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
   color: var(--text-primary);
   text-align: left;
 }
+.awards-text { display: flex; flex-direction: column; gap: 6px; }
+.awards-text p { margin: 0; padding: 0; }
 
-/* 3 PUNKTAS: Priverstinis min-width ir min-height, kad piktogramos nedingtų */
 .icon-yellow {
   display: inline-block;
   width: 16px; height: 16px;
@@ -164,7 +163,7 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 .description-text p { text-indent: 24px; margin-bottom: 8px; text-align: left; }
 .description-text p:last-child { margin-bottom: 0; }
 
-.trailer-placeholder { width: 100%; aspect-ratio: 16/9; background-color: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
+.trailer-placeholder { width: 100%; aspect-ratio: 16/9; background-color: #000; border-radius: 8px; display: flex; align-items: center; center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
 .trailer-content { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 45%; gap: 12px; }
 .trailer-label { color: var(--text-secondary); font-size: clamp(12px, 3.5vw, 16px); font-weight: 500; text-align: center; }
 .trailer-play-icon { height: 100%; width: auto; max-height: 55px; transition: transform 0.2s; }
@@ -193,4 +192,46 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(14,17,22,0.95); z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 16px; }
 .modal-content { background: var(--surface-color); border-radius: 12px; padding: 24px; width: 100%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 12px;}
 .modal-content h3 { border: none; margin: 0 0 8px 0; padding: 0; font-size: 16px; color: var(--text-primary); text-align: center; }
-#comment-name { width: 100%; padding: 12px; background: var(--bg-color); border:
+#comment-name { width: 100%; padding: 12px; background: var(--bg-color); border: 1px solid #333; color: white; border-radius: 8px; font-family: inherit; font-size: 14px; }
+#comment-text { width: 100%; height: 150px; padding: 12px; background: var(--bg-color); border: 1px solid #333; color: white; border-radius: 8px; font-family: inherit; font-size: 14px; resize: none; }
+.modal-actions { display: flex; gap: 12px; margin-top: 8px; }
+.modal-actions button { margin-top: 0; }
+#comment-success { color: var(--accent-color); font-size: 13px; margin-top: 8px; text-align: center; line-height: 1.4; }
+
+#lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(14,17,22,0.98); z-index: 4000; display: flex; align-items: center; justify-content: center; }
+#lightbox-img { max-width: 95%; max-height: 85vh; border-radius: 4px; object-fit: contain; }
+#lightbox-close { position: absolute; top: 20px; right: 20px; background: none; border: none; cursor: pointer; padding: 8px; }
+#lightbox-prev, #lightbox-next { position: absolute; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 16px; }
+#lightbox-prev { left: 5px; }
+#lightbox-next { right: 5px; }
+#lightbox-close img { width: 32px; height: 32px; }
+#lightbox-prev img, #lightbox-next img { width: 40px; height: 40px; }
+
+/* FIX: Meniu juosta užfiksuota griežtai ekrano APČIOJE (bottom: 0) ir viršutiniame gylio sluoksnyje */
+.bottom-bar { 
+  position: fixed; 
+  bottom: 0; 
+  left: 0; 
+  width: 100%;
+  height: 70px; 
+  background-color: var(--surface-color);
+  display: flex; 
+  justify-content: space-around; 
+  align-items: center;
+  border-top: 1px solid #333; 
+  z-index: 9999; 
+  padding-bottom: var(--safe-bottom); 
+}
+
+.btn-nav { 
+  background: none; 
+  border: none; 
+  cursor: pointer; 
+  padding: 10px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+}
+.btn-nav img { width: 26px; height: 26px; transition: opacity 0.2s; }
+.btn-nav:disabled img { opacity: 0.15; cursor: not-allowed; }
+.btn-nav.active img { opacity: 1; filter: drop-shadow(0 0 2px rgba(245, 197, 24, 0.3)); }
