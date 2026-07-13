@@ -11,7 +11,7 @@ let currentImageIndex = 0;
 const emptyCommentPhrases = [
   "Užfiksuota keista tyla komentarų skyriuje.",
   "Komentarų juosta šiuo metu vaidina tylų vaidmenį.",
-  "Čia galėtų būti tavo kino kritikos debiutas.",
+  "Čia galètent būti tavo kino kritikos debiutas.",
   "Niekas dar nepasakė: „blogas filmas“.",
   "Tuščia scena. Reikia pagrindinio veikėjo.",
   "Ši vieta laukia pirmosios recenzijos premjeros.",
@@ -38,6 +38,13 @@ async function init() {
       document.getElementById('movie-content').classList.add('hidden');
       document.getElementById('empty-state').classList.remove('hidden');
       return;
+    }
+
+    // 7 PUNKTAS: Vos tik sėkmingai atidarius filmą, įrašome jo ID į sesijos atmintį
+    let viewedMovies = JSON.parse(sessionStorage.getItem('viewed_movies') || '[]');
+    if (!viewedMovies.includes(String(movie.ID))) {
+      viewedMovies.push(String(movie.ID));
+      sessionStorage.setItem('viewed_movies', JSON.stringify(viewedMovies));
     }
 
     let catMovies = catId === 'all'
@@ -80,7 +87,6 @@ function renderMovie(m) {
   const paddedId = String(m.ID).padStart(4, '0');
 
   let metaItems = [];
-  // ATNAUJINTA: isMandatory argumentas leidžia priverstinai palikti laukelį (Subtitrams)
   const addMeta = (icon, val, isMandatory = false) => {
       if (isMandatory || (val && String(val).trim() !== '-' && String(val).trim() !== '')) {
           let displayVal = (val && String(val).trim() !== '') ? val : '-';
@@ -88,7 +94,7 @@ function renderMovie(m) {
       }
   };
   addMeta('ic_info_language.svg', m.Dubbing);
-  addMeta('ic_info_subs.svg', m.Subtitles, true); // Subtitrai privalomi filmo puslapyje!
+  addMeta('ic_info_subs.svg', m.Subtitles, true); // Privaloma filmo puslapyje
   addMeta('ic_info_year.svg', m.Year);
   addMeta('ic_info_country.svg', m.Country);
 
@@ -127,7 +133,44 @@ function renderMovie(m) {
       </div>
   `).join('') : '';
 
-  let descHtml = (m.Description && String(m.Description).trim() !== '-' && String(m.Description).trim() !== '') ? `<div class="description-text">${m.Description}</div>` : '';
+  // 4 PUNKTAS: Išskaidome ilgą aprašymą pastraipomis pagal naujos eilutės (\n) simbolį
+  let descHtml = '';
+  if (m.Description && String(m.Description).trim() !== '-' && String(m.Description).trim() !== '') {
+    const paragraphs = m.Description.split('\n').map(p => p.trim()).filter(Boolean);
+    descHtml = `<div class="description-text">${paragraphs.map(p => `<p>${p}</p>`).join('')}</div>`;
+  }
+
+  // 2 ir 8 PUNKTAS: Surenkame Citatą ir Įdomų faktą į vieną bendrą rėmelį
+  let quoteFactHtml = '';
+  let hasQuote = m.Quote && String(m.Quote).trim() !== '-' && String(m.Quote).trim() !== '';
+  let hasFact = m.Fact && String(m.Fact).trim() !== '-' && String(m.Fact).trim() !== '';
+
+  if (hasQuote || hasFact) {
+    quoteFactHtml = `<div class="quote-fact-box">`;
+    if (hasQuote) {
+      quoteFactHtml += `
+        <div class="qf-row">
+          ${getInfoIconHtml('ic_info_quote.svg')}
+          <div class="qf-text">„${m.Quote}“</div>
+        </div>`;
+    }
+    if (hasFact) {
+      quoteFactHtml += `
+        <div class="qf-row">
+          ${getInfoIconHtml('ic_info_fact.svg')}
+          <div>${m.Fact}</div>
+        </div>`;
+    }
+    quoteFactHtml += `</div>`;
+  }
+
+  // 3 PUNKTAS: Sunkiai iškovoti Apdovanojimai
+  let awardsHtml = (m.Awards && String(m.Awards).trim() !== '-' && String(m.Awards).trim() !== '') ? `
+    <div class="awards-box">
+      ${getInfoIconHtml('ic_info_awards.svg')}
+      <div>${m.Awards}</div>
+    </div>
+  ` : '';
 
   let ratingDateStr = m.RatingDate ? String(m.RatingDate).substring(0, 10) : new Date().toISOString().split('T')[0];
 
@@ -188,6 +231,8 @@ function renderMovie(m) {
                         addBlock(transformHtml) +
                         addBlock(crewHtml) + 
                         addBlock(descHtml) + 
+                        addBlock(quoteFactHtml) +
+                        addBlock(awardsHtml) +
                         addBlock(ratingsBlock) + 
                         (imdbLinkHtml ? `<div style="margin-top:16px;">${imdbLinkHtml}</div>` : '') +
                         addBlock(trailerHtml) + 
@@ -338,26 +383,46 @@ function setupComments() {
 function setupLightbox() {
   const lightbox = document.getElementById('lightbox');
   const lbImg = document.getElementById('lightbox-img');
+  const btnPrev = document.getElementById('lightbox-prev');
+  const btnNext = document.getElementById('lightbox-next');
   
+  function updateLightboxArrows() {
+    if(!btnPrev || !btnNext) return;
+    // 6 PUNKTAS: Išjungiame rodykles pasiekus kraštus ir pritemdome jas vizualiai
+    btnPrev.style.opacity = (currentImageIndex === 0) ? '0.15' : '1';
+    btnNext.style.opacity = (currentImageIndex === galleryImages.length - 1) ? '0.15' : '1';
+  }
+
   document.addEventListener('click', (e) => {
     if (e.target.classList.contains('gallery-img')) {
       currentImageIndex = parseInt(e.target.getAttribute('data-index'));
       lbImg.src = galleryImages[currentImageIndex];
       lightbox.classList.remove('hidden');
+      updateLightboxArrows();
     }
   });
 
   document.getElementById('lightbox-close').onclick = () => lightbox.classList.add('hidden');
   
-  document.getElementById('lightbox-prev').onclick = () => {
-    currentImageIndex = (currentImageIndex > 0) ? currentImageIndex - 1 : galleryImages.length - 1;
-    lbImg.src = galleryImages[currentImageIndex];
-  };
+  if (btnPrev) {
+    btnPrev.onclick = () => {
+      if (currentImageIndex > 0) {
+        currentImageIndex--;
+        lbImg.src = galleryImages[currentImageIndex];
+        updateLightboxArrows();
+      }
+    };
+  }
 
-  document.getElementById('lightbox-next').onclick = () => {
-    currentImageIndex = (currentImageIndex < galleryImages.length - 1) ? currentImageIndex + 1 : 0;
-    lbImg.src = galleryImages[currentImageIndex];
-  };
+  if (btnNext) {
+    btnNext.onclick = () => {
+      if (currentImageIndex < galleryImages.length - 1) {
+        currentImageIndex++;
+        lbImg.src = galleryImages[currentImageIndex];
+        updateLightboxArrows();
+      }
+    };
+  }
 }
 
 init();
