@@ -11,10 +11,12 @@ async function init() {
   try {
     const categories = await fetchAPI('getCategories');
     
-    let currentCat = categories.find(c => String(c.ID) === String(catId));
-    if (catId === 'all') {
-      currentCat = { Name: 'Visi filmai', Description: 'Pilnas visų kolekcijoje esančių filmų sąrašas.' };
+    // Sinchronizuojame virtualią kategoriją sąrašo pradžioje
+    if (!categories.some(c => c.ID === 'all')) {
+      categories.unshift({ Name: 'Visi filmai', Description: 'Pilnas visų kolekcijoje esančių filmų sąrašas.', ID: 'all' });
     }
+    
+    let currentCat = categories.find(c => String(c.ID) === String(catId));
 
     if (currentCat) {
       titleEl.textContent = currentCat.Name;
@@ -23,9 +25,12 @@ async function init() {
       titleEl.textContent = 'Kategorija';
     }
 
+    // 5 PUNKTAS: Kategorijų puslapio navigacijos valdymas (No loop)
+    setupCategoryNavigation(categories, currentCat);
+
     const rawMovies = await fetchAPI('getMovies');
     
-    // Front-end sanitizacija: paverčiame tuščias kategorijas į 0
+    // Front-end sanitizacija: tuščias grafas paverčiame į 0 kategoriją
     const allMovies = rawMovies.map(m => {
       if (m.Category === undefined || m.Category === null || String(m.Category).trim() === '') {
         m.Category = 0;
@@ -43,16 +48,21 @@ async function init() {
       return;
     }
 
+    // 7 PUNKTAS: Išsitraukiame peržiūrėtų filmų sąrašą iš sesijos atminties
+    const viewedMovies = JSON.parse(sessionStorage.getItem('viewed_movies') || '[]');
+
     container.innerHTML = '';
     catMovies.forEach(m => {
       const a = document.createElement('a');
       a.href = `movie.html?id=${m.ID}&category=${catId}`;
-      a.className = 'card';
+      
+      // Jeigu filmo ID yra sesijos atmintyje, pridedame papildomą klasę .movie-viewed
+      const isViewed = viewedMovies.includes(String(m.ID));
+      a.className = isViewed ? 'card movie-viewed' : 'card';
       
       let dubCode = m.Dubbing ? m.Dubbing.split(',')[0].trim().toLowerCase() : '';
       let flagBg = (dubCode && dubCode !== '-') ? `<img src="images/logos/flag_${dubCode}.svg" class="card-bg-flag" onerror="this.style.display='none'">` : '';
       
-      // SUTVARKITI SUBTITRAI: Jei tuščia arba "-", nerodome nieko
       let subHtml = '';
       if (m.Subtitles && String(m.Subtitles).trim() !== '-' && String(m.Subtitles).trim() !== '') {
         const subCodes = String(m.Subtitles).split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
@@ -69,9 +79,9 @@ async function init() {
       a.innerHTML = `
         ${flagBg}
         <div class="card-content">
-          <div class="list-title ellipsis">${m.OriginalTitle || ''}</div>
-          <div class="list-title-lt ellipsis">${m.LithuanianTitle || ''}</div>
-          <div class="list-meta ellipsis">${subHtml}${genreYear}</div>
+          <div class="list-title">${m.OriginalTitle || ''}</div>
+          <div class="list-title-lt">${m.LithuanianTitle || ''}</div>
+          <div class="list-meta">${subHtml}${genreYear}</div>
         </div>
       `;
       container.appendChild(a);
@@ -79,6 +89,28 @@ async function init() {
   } catch (e) {
     container.classList.add('hidden');
     document.getElementById('error-message').classList.remove('hidden');
+  }
+}
+
+function setupCategoryNavigation(categories, currentCat) {
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  if(!btnPrev || !btnNext || !currentCat) return;
+
+  const currentIndex = categories.findIndex(c => String(c.ID) === String(currentCat.ID));
+
+  if (currentIndex > 0) {
+    btnPrev.disabled = false;
+    btnPrev.onclick = () => window.location.href = `category.html?id=${categories[currentIndex - 1].ID}`;
+  } else {
+    btnPrev.disabled = true;
+  }
+
+  if (currentIndex < categories.length - 1 && currentIndex !== -1) {
+    btnNext.disabled = false;
+    btnNext.onclick = () => window.location.href = `category.html?id=${categories[currentIndex + 1].ID}`;
+  } else {
+    btnNext.disabled = true;
   }
 }
 
