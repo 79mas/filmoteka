@@ -71,10 +71,13 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
   text-shadow: 0 1px 4px rgba(0,0,0,0.85); 
 }
 
-/* ATNAUJINTA: Visoms trims eilutėms garantuojamas taisyklingas kirpimas su daugtaškiu */
-.list-title { font-weight: 600; font-size: 16px; color: #ffffff; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.list-title { font-weight: 600; font-size: 16px; color: #ffffff; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; transition: color 0.2s; }
 .list-title-lt { font-size: 13px; color: var(--accent-color); font-weight: 500; margin-top: 2px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
 .list-meta { font-size: 13px; color: var(--text-secondary); margin-top: 2px; display: block; text-align: left; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* 7 PUNKTAS: Klasė, kuri vizualiai pritemdo jau lankytojo peržiūrėtus filmus */
+.movie-viewed .list-title, .movie-viewed .list-title-lt { opacity: 0.4; }
+.movie-viewed .list-meta { opacity: 0.5; }
 
 .inline-flag { width: 16px; height: 11px; border-radius: 2px; object-fit: cover; margin-right: 6px; box-shadow: 0 0 2px rgba(0,0,0,0.5); vertical-align: middle; margin-top: -2px; }
 
@@ -90,6 +93,7 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 .mh-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
 .mh-meta-item { font-size: 13px; color: var(--text-secondary); display: flex; align-items: flex-start; gap: 6px; white-space: normal; overflow-wrap: break-word; line-height: 1.4; }
 
+/* 1 PUNKTAS: Visi tekstiniai blokai griežtai lygiuojami palei kairę kraštinę */
 .transformation-box {
   background: rgba(245, 197, 24, 0.04);
   border-left: 2px solid var(--accent-color);
@@ -98,7 +102,7 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
   font-size: 13px;
   color: var(--text-secondary);
   line-height: 1.6;
-  text-align: justify;
+  text-align: left;
 }
 .transformation-box-label {
   font-weight: 600;
@@ -109,19 +113,36 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
   letter-spacing: 0.5px;
 }
 
-.icon-yellow {
-  display: inline-block;
-  width: 16px; height: 16px;
-  background-color: var(--accent-color);
-  -webkit-mask-size: contain; mask-size: contain;
-  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-  -webkit-mask-position: center; mask-position: center;
-  flex-shrink: 0;
+/* 2 ir 8 PUNKTAS: Jungtinis Citatos ir Įdomaus fakto baliono stilius */
+.quote-fact-box {
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 2px solid #ffffff;
+  padding: 14px 16px;
+  border-radius: 4px 12px 12px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.qf-row { display: flex; gap: 12px; font-size: 13px; line-height: 1.5; color: var(--text-primary); text-align: left; }
+.qf-text { font-style: italic; color: var(--text-primary); }
+
+/* 3 PUNKTAS: Apdovanojimų baliono stilius */
+.awards-box {
+  background: rgba(245, 197, 24, 0.03);
+  border-left: 2px solid var(--accent-color);
+  padding: 14px 16px;
+  border-radius: 4px 12px 12px 4px;
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  text-align: left;
 }
 
 .info-row { display: flex; margin-bottom: 12px; font-size: 13px; line-height: 1.4; }
 .label { width: 140px; color: var(--text-secondary); flex-shrink: 0; display: flex; align-items: center; gap: 10px; }
-.value { flex-grow: 1; color: var(--text-primary); }
+.value { flex-grow: 1; color: var(--text-primary); text-align: left; }
 
 .ratings-container { display: flex; justify-content: space-between; gap: 8px; text-align: center; align-items: flex-end; margin-bottom: 8px;}
 .rating-badge { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; color: var(--text-secondary); width: 20%;}
@@ -129,7 +150,10 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 .rating-score { color: var(--text-primary); font-weight: 500; font-size: 12px;}
 .ratings-date { font-size: 10px; color: var(--text-secondary); text-align: center; opacity: 0.5; margin-top: 8px; }
 
-.description-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; text-align: justify; }
+/* 1 ir 4 PUNKTAS: Aprašymo blokas lygiuojamas kairėje, o pastraipos turi įtrauką */
+.description-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; text-align: left; }
+.description-text p { text-indent: 24px; margin-bottom: 8px; text-align: left; }
+.description-text p:last-child { margin-bottom: 0; }
 
 .trailer-placeholder { width: 100%; aspect-ratio: 16/9; background-color: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
 .trailer-content { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 45%; gap: 12px; }
@@ -148,7 +172,7 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
 .comment-author { font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 10px; }
 .avatar { width: 32px; height: 32px; border-radius: 50%; background: #2a2d35; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-secondary); }
 .comment-date { font-size: 11px; color: var(--text-secondary); }
-.comment-text { font-size: 13px; color: var(--text-secondary); margin-bottom: 0; line-height: 1.5; text-align: justify;}
+.comment-text { font-size: 13px; color: var(--text-secondary); margin-bottom: 0; line-height: 1.5; text-align: left;}
 
 .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 14px; line-height: 1.6; font-style: italic; }
 
@@ -200,5 +224,5 @@ h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5p
   justify-content: center; 
 }
 .btn-nav img { width: 26px; height: 26px; transition: opacity 0.2s; }
-.btn-nav:disabled img { opacity: 0.3; cursor: not-allowed; }
+.btn-nav:disabled img { opacity: 0.15; cursor: not-allowed; }
 .btn-nav.active img { opacity: 1; filter: drop-shadow(0 0 2px rgba(245, 197, 24, 0.3)); }
