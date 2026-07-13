@@ -15,7 +15,7 @@ const emptyCommentPhrases = [
   "Niekas dar nepasakė: „blogas filmas“.",
   "Tuščia scena. Reikia pagrindinio veikėjo.",
   "Ši vieta laukia pirmosios recenzijos premjeros.",
-  "Komentarų archyvas dar nepradėjo filmavimo.",
+  "Komentarų archive dar nepradėjo filmavimo.",
   "Spragėsiai paruošti. Nuomonės laukiamos.",
   "Net statistai dar nieko neparašė.",
   "Šio filmo byloje trūksta žiūrovo balso."
@@ -74,7 +74,6 @@ async function init() {
   }
 }
 
-// 3 PUNKTAS: Ištaisyta sintaksė - pašalintos pavienės kabutės (''), kad mask-image nekeltų konfliktų naršyklėse
 const getInfoIconHtml = (iconName) => {
   return `<span class="icon-yellow" style="-webkit-mask-image: url(images/logos/${iconName}); mask-image: url(images/logos/${iconName});"></span>`;
 };
@@ -111,9 +110,10 @@ function renderMovie(m) {
     </div>
   `;
 
+  // 4 PUNKTAS: Pavadinimas pakeistas į „PERSONAŽO TRANSFORMACIJA FILME“
   let transformHtml = (m.TransformationStage && String(m.TransformationStage).trim() !== '-') ? `
     <div class="transformation-box">
-      <div class="transformation-box-label">Transformacijos etapas</div>
+      <div class="transformation-box-label">PERSONAŽO TRANSFORMACIJA FILME</div>
       ${m.TransformationStage}
     </div>
   ` : '';
@@ -146,10 +146,11 @@ function renderMovie(m) {
   if (hasQuote || hasFact) {
     quoteFactHtml = `<div class="quote-fact-box">`;
     if (hasQuote) {
+      // 2 PUNKTAS: Pašalintos kodo dedamos kabutės, naudojamas grynas tekstas iš tavo CMS
       quoteFactHtml += `
         <div class="qf-row">
           ${getInfoIconHtml('ic_info_quote.svg')}
-          <div class="qf-text">„${m.Quote}“</div>
+          <div class="qf-text">${m.Quote}</div>
         </div>`;
     }
     if (hasFact) {
@@ -162,12 +163,17 @@ function renderMovie(m) {
     quoteFactHtml += `</div>`;
   }
 
-  let awardsHtml = (m.Awards && String(m.Awards).trim() !== '-' && String(m.Awards).trim() !== '') ? `
-    <div class="awards-box">
-      ${getInfoIconHtml('ic_info_awards.svg')}
-      <div>${m.Awards}</div>
-    </div>
-  ` : '';
+  // 3 PUNKTAS: Apdovanojimai sėkmingai skaidomi pastraipomis (nauja eilutė išlaikoma)
+  let awardsHtml = '';
+  if (m.Awards && String(m.Awards).trim() !== '-' && String(m.Awards).trim() !== '') {
+    const awardParagraphs = String(m.Awards).split('\n').map(p => p.trim()).filter(Boolean);
+    awardsHtml = `
+      <div class="awards-box">
+        ${getInfoIconHtml('ic_info_awards.svg')}
+        <div class="awards-text">${awardParagraphs.map(p => `<p>${p}</p>`).join('')}</div>
+      </div>
+    `;
+  }
 
   let ratingDateStr = m.RatingDate ? String(m.RatingDate).substring(0, 10) : new Date().toISOString().split('T')[0];
 
