@@ -9,26 +9,52 @@
 </head>
 <body class="has-bottom-bar">
   <header>
-    <h1 id="site-title">Kraunama...</h1>
+    <h1 id="site-title">...</h1>
     <p id="site-description" class="page-description"></p>
+    
+    <!-- Paieškos juosta -->
+    <div class="search-container">
+      <input type="text" id="search-input" class="search-input" placeholder="Ieškoti filmo...">
+    </div>
   </header>
   
-  <main id="categories-container"><div class="loading" style="text-align:center;">Kraunama...</div></main>
+  <main id="categories-container"><div class="loading" id="loading-text" style="text-align:center;">Kraunama...</div></main>
   
-  <div id="empty-state" class="empty-state hidden">
-    Galimai gali būti, kad kažkas kažkur kažką kažkodėl sugadino, arba tiesiog nutrūko sąsajos. Aišku, gali būti, kad baigėsi internetas, bet jeigu aš būčiau Tavo vietoje pabandyčiau po kelių minučių. Turbūt.
+  <!-- Paieškos rezultatų konteineris -->
+  <main id="search-results" class="hidden"></main>
+
+  <div id="empty-state" class="empty-state hidden"></div>
+  <div id="error-message" class="error-text hidden"></div>
+  
+  <!-- Kontaktų blokas -->
+  <div class="contact-box" id="contact-section">
+    <p id="contact-desc">Turite klausimų ar pasiūlymų?</p>
+    <button id="open-contact" class="btn-outline"><span class="icon-yellow" style="-webkit-mask-image: url(images/logos/ic_info_writer.svg); mask-image: url(images/logos/ic_info_writer.svg);"></span> <span id="btn-contact-text">Susisiekti</span></button>
+  </div>
+
+  <!-- Kontaktų modalinis langas -->
+  <div id="contact-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="modal-contact-title">Parašykite man</h3>
+      <input type="text" id="contact-name" placeholder="Jūsų vardas" maxlength="50">
+      <input type="email" id="contact-email" placeholder="Jūsų el. paštas">
+      <textarea id="contact-message" placeholder="Parašykite žinutę..." maxlength="5000"></textarea>
+      <div id="contact-error" class="error-text"></div>
+      <div id="contact-success" class="hidden"></div>
+      <div class="modal-actions" id="contact-action-buttons">
+        <button class="btn-outline btn-cancel" id="close-contact-modal"><span id="btn-contact-cancel">Atšaukti</span></button>
+        <button class="btn-outline" id="submit-contact"><span id="btn-contact-submit">Išsiųsti</span></button>
+      </div>
+      <button class="btn-outline hidden" id="contact-ok"><span id="btn-contact-ok">Gerai</span></button>
+    </div>
   </div>
   
-  <div id="error-message" class="hidden">Informacija laikinai nepasiekiama.</div>
-  
   <nav class="bottom-bar">
-    <button class="btn-nav" disabled><img src="images/logos/ic_nav_back.svg" alt="Atgal"></button>
-    <button class="btn-nav" disabled><img src="images/logos/ic_nav_home.svg" alt="Namai"></button>
+    <button class="btn-nav active" disabled><img src="images/logos/ic_nav_home.svg" alt="Namai"></button>
     <button class="btn-nav" disabled><img src="images/logos/ic_nav_list.svg" alt="Sąrašas"></button>
     <button class="btn-nav" disabled><img src="images/logos/ic_nav_like_outline.svg" alt="Patinka"></button>
-    <button class="btn-nav" disabled><img src="images/logos/ic_nav_forward.svg" alt="Pirmyn"></button>
   </nav>
 
-  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/index.js"></script>
 </body>
 </html>
