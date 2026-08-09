@@ -11,15 +11,22 @@
   <header>
     <h1 id="category-title">...</h1>
     <p id="category-description" class="page-description"></p>
+
+    <!-- Paieškos juosta su Išvalymo (X) mygtuku -->
+    <div class="search-container">
+      <input type="text" id="search-input" class="search-input" placeholder="Ieškoti filmo...">
+      <button id="search-clear" class="search-clear hidden">✕</button>
+    </div>
   </header>
   
-  <main id="movies-container"><div class="loading" style="text-align:center;">Kraunama...</div></main>
+  <main id="movies-container"><div class="loading" id="loading-text" style="text-align:center;">Kraunama...</div></main>
   
-  <div id="empty-state" class="empty-state hidden">
-    Oho! Atrodo iš tiesų tuštoka... Jei čia būtų namai, tai greitai šitas kambarys virstų sandėliuku.
-  </div>
+  <!-- Paieškos rezultatų konteineris -->
+  <main id="search-results" class="hidden"></main>
+
+  <div id="empty-state" class="empty-state hidden">Tuštoka...</div>
   
-  <div id="error-message" class="hidden">Informacija laikinai nepasiekiama.</div>
+  <div id="error-message" class="error-text hidden">Informacija laikinai nepasiekiama.</div>
   
   <nav class="bottom-bar">
     <button class="btn-nav" id="btn-prev" disabled><img src="images/logos/ic_nav_back.svg" alt="Atgal"></button>
