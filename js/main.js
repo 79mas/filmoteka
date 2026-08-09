@@ -6,6 +6,7 @@ async function init() {
   const emptyState = document.getElementById('empty-state');
   const errorMsg = document.getElementById('error-message');
   const searchInput = document.getElementById('search-input');
+  const searchClear = document.getElementById('search-clear'); // NAUJA
 
   try {
     // 1. Pirmiausia parsiunčiame visą konfigūraciją ir išsaugome sesijoje, kad kiti puslapiai ją turėtų
@@ -55,14 +56,15 @@ async function init() {
       emptyState.classList.remove('hidden');
     }
 
-    // 4. PAIEŠKOS LOGIKA
+    // 4. PAIEŠKOS LOGIKA SU IŠVALYMU
     searchInput.addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase().trim();
       if (query.length > 0) {
+        searchClear.classList.remove('hidden'); // Parodome X
         catContainer.classList.add('hidden');
         searchContainer.classList.remove('hidden');
         
-        // Ieškome per visus 7 tavo nurodytus stulpelius
+        // Ieškome per visus 7 stulpelius
         const results = allMovies.filter(m => {
           const searchableText = [
             m.OriginalTitle, m.LithuanianTitle, m.Director, 
@@ -73,9 +75,20 @@ async function init() {
         
         renderSearchResults(results, searchContainer, config, 'all');
       } else {
+        searchClear.classList.add('hidden'); // Paslepiame X
         catContainer.classList.remove('hidden');
         searchContainer.classList.add('hidden');
       }
+    });
+
+    // Mygtuko "X" paspaudimo logika
+    searchClear.addEventListener('click', () => {
+      searchInput.value = '';
+      searchClear.classList.add('hidden');
+      catContainer.classList.remove('hidden');
+      searchContainer.classList.add('hidden');
+      // Sugrąžiname kursorių atgal į laukelį (patogus UX)
+      searchInput.focus(); 
     });
 
     // 5. KONTAKTŲ FORMOS LOGIKA
@@ -124,7 +137,8 @@ function createCategoryCard(c, count) {
 function renderSearchResults(movies, container, config, catId) {
   container.innerHTML = '';
   if (movies.length === 0) {
-    container.innerHTML = `<div class="empty-state" style="margin-top: 32px;">${config.text_empty_movie || 'Nieko nerasta.'}</div>`;
+    // ATNAUJINTA: Naudojamas naujas CMS raktas
+    container.innerHTML = `<div class="empty-state" style="margin-top: 32px;">${config.text_search_empty || 'Pagal jūsų užklausą filmų nerasta.'}</div>`;
     return;
   }
   
