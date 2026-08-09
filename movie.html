@@ -5,31 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Filmas</title>
   <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
-  <link rel="stylesheet" href="css/style.css?v=4">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="has-bottom-bar">
 
   <div id="movie-content">
-    <div style="text-align:center; padding-top: 50px;">Kraunama...</div>
+    <div class="loading" id="loading-text" style="text-align:center; padding-top: 50px;">Kraunama...</div>
   </div>
 
-  <div id="empty-state" class="empty-state hidden">
-    Tyliau! Ačiū. Oooo... Išgirdau! Kažkas iš internetų sakė, kad tokio filmo dar nėra šioje duomenų bazėje. Tavo elgesys panašus į įsilaužėlio!
-  </div>
+  <div id="empty-state" class="empty-state hidden"></div>
 
   <div id="comment-modal" class="modal hidden">
     <div class="modal-content">
-      <h3>Palikti komentarą</h3>
+      <h3 id="modal-comment-title">Palikti komentarą</h3>
       <input type="text" id="comment-name" placeholder="Jūsų vardas" maxlength="50">
       <textarea id="comment-text" placeholder="Parašykite komentarą..." maxlength="5000"></textarea>
       
+      <div id="comment-error" class="error-text"></div>
+      
       <div class="modal-actions" id="modal-action-buttons">
-        <button id="close-modal" class="btn-outline btn-cancel">Atšaukti</button>
-        <button id="submit-comment" class="btn-outline">Išsiųsti</button>
+        <button id="close-modal" class="btn-outline btn-cancel"><span id="btn-cancel-text">Atšaukti</span></button>
+        <button id="submit-comment" class="btn-outline"><span id="btn-submit-text">Išsiųsti</span></button>
       </div>
       
-      <div id="comment-success" class="hidden">Ačiū! Jūsų komentaras išsiųstas moderatoriui. Komentaras bus viešai rodomas tik po patvirtinimo.</div>
-      <button id="comment-ok" class="btn-outline hidden" style="margin-top: 12px;">Gerai</button>
+      <div id="comment-success" class="hidden"></div>
+      <button id="comment-ok" class="btn-outline hidden" style="margin-top: 12px;"><span id="btn-ok-text">Gerai</span></button>
     </div>
   </div>
 
@@ -48,6 +48,6 @@
     <button class="btn-nav" id="btn-next" disabled><img src="images/logos/ic_nav_forward.svg" alt="Pirmyn"></button>
   </nav>
 
-  <script type="module" src="js/movie.js?v=4"></script>
+  <script type="module" src="js/movie.js"></script>
 </body>
 </html>
