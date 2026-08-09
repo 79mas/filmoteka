@@ -8,22 +8,27 @@ let isLiked = false;
 let galleryImages = [];
 let currentImageIndex = 0;
 
-const emptyCommentPhrases = [
-  "Užfiksuota keista tyla komentarų skyriuje.",
-  "Komentarų juosta šiuo metu vaidina tylų vaidmenį.",
-  "Čia galėtų būti tavo kino kritikos debiutas.",
-  "Niekas dar nepasakė: „blogas filmas“.",
-  "Tuščia scena. Reikia pagrindinio veikėjo.",
-  "Ši vieta laukia pirmosios recenzijos premjeros.",
-  "Komentarų archive dar nepradėjo filmavimo.",
-  "Spragėsiai paruošti. Nuomonės laukiamos.",
-  "Net statistai dar nieko neparašė.",
-  "Šio filmo byloje trūksta žiūrovo balso."
-];
+// Saugiklis, jei CMS nebūtų užpildytas
+const fallbackPhrases = ["Komentarų dar nėra."];
 
 async function init() {
+  const contentContainer = document.getElementById('movie-content');
+  const emptyState = document.getElementById('empty-state');
+  
   try {
-    const rawMovies = await fetchAPI('getMovies');
+    // 1. Ištraukiame config iš sesijos (arba parsiunčiame)
+    let config = JSON.parse(sessionStorage.getItem('site_config'));
+    if (!config) {
+      config = await fetchAPI('getConfig');
+      sessionStorage.setItem('site_config', JSON.stringify(config));
+    }
+    applyConfigTexts(config);
+
+    // 2. Vienu metu fone parsiunčiame filmus IR kategorijas (kad žinotume kategorijos pavadinimą)
+    const [rawMovies, categories] = await Promise.all([
+      fetchAPI('getMovies'),
+      fetchAPI('getCategories')
+    ]);
     
     const allMovies = rawMovies.map(m => {
       if (m.Category === undefined || m.Category === null || String(m.Category).trim() === '') {
@@ -35,8 +40,9 @@ async function init() {
     const movie = allMovies.find(m => String(m.ID) === String(movieId));
     
     if (!movie) {
-      document.getElementById('movie-content').classList.add('hidden');
-      document.getElementById('empty-state').classList.remove('hidden');
+      contentContainer.classList.add('hidden');
+      emptyState.textContent = config.text_empty_movie || "Filmas nerastas.";
+      emptyState.classList.remove('hidden');
       return;
     }
 
@@ -55,47 +61,92 @@ async function init() {
     const nextId = movieIndex < catMovies.length - 1 ? catMovies[movieIndex + 1].ID : null;
 
     movie.CommunityRating = '...';
-    renderMovie(movie);
+    
+    // Perduodame ir kategorijų sąrašą bei config
+    renderMovie(movie, categories, config);
     setupBottomBar(prevId, nextId);
     setupLightbox();
 
     fetchAPI('getInteractions', { movieId }).then(interactions => {
       const commVal = document.getElementById('community-rating-val');
       if (commVal) commVal.textContent = interactions.likes || 0;
-      renderInteractions(interactions);
-      setupLikeBtn();
-      setupComments();
+      renderInteractions(interactions, config);
+      setupLikeBtn(config);
+      setupComments(config);
     }).catch(err => console.log("Nepavyko užkrauti interakcijų", err));
 
   } catch (e) { 
     console.error(e); 
-    document.getElementById('movie-content').classList.add('hidden');
-    document.getElementById('empty-state').classList.remove('hidden');
+    contentContainer.classList.add('hidden');
+    emptyState.textContent = "Informacija laikinai nepasiekiama.";
+    emptyState.classList.remove('hidden');
   }
+}
+
+function applyConfigTexts(config) {
+  const setTxt = (id, text) => { if(document.getElementById(id) && text) document.getElementById(id).textContent = text; };
+  const setPh = (id, text) => { if(document.getElementById(id) && text) document.getElementById(id).placeholder = text; };
+  
+  setTxt('loading-text', config.text_loading);
+  setTxt('modal-comment-title', config.text_comment_title);
+  setPh('comment-name', config.text_comment_name_ph);
+  setPh('comment-text', config.text_comment_text_ph);
+  setTxt('btn-cancel-text', config.text_btn_cancel);
+  setTxt('btn-submit-text', config.text_btn_submit);
+  setTxt('btn-ok-text', config.text_btn_ok);
+  setTxt('comment-success', config.text_comment_success);
 }
 
 const getInfoIconHtml = (iconName) => {
   return `<span class="icon-yellow" style="-webkit-mask-image: url(images/logos/${iconName}); mask-image: url(images/logos/${iconName});"></span>`;
 };
 
-function renderMovie(m) {
+// Funkcija, pridedanti vėliavėles prieš kalbos kodą
+const injectFlags = (str) => {
+  if (!str || str.trim() === '-' || str.trim() === '') return str;
+  return String(str).split(',').map(s => {
+    const code = s.trim();
+    if (!code) return '';
+    const lower = code.toLowerCase();
+    return `<img src="images/logos/flag_${lower}.svg" class="inline-flag" onerror="this.style.display='none'">${code}`;
+  }).join(', ');
+};
+
+function renderMovie(m, categories, config) {
   document.title = m.OriginalTitle || 'Filmas';
   const container = document.getElementById('movie-content');
   if(!container) return;
   
   const paddedId = String(m.ID).padStart(4, '0');
 
+  // Išgauname kategorijos pavadinimą
+  let catObj = categories.find(c => String(c.ID) === String(m.Category));
+  let categoryName = catObj ? catObj.Name : '';
+
+  let subtitleBlockHtml = '';
+  if (categoryName || (m.Genre && String(m.Genre).trim() !== '-')) {
+    subtitleBlockHtml = `<div class="mh-subtitle-block">`;
+    if (categoryName) subtitleBlockHtml += `<div class="mh-subtitle-item">${categoryName}</div>`;
+    if (m.Genre && String(m.Genre).trim() !== '-') subtitleBlockHtml += `<div class="mh-subtitle-item">${m.Genre}</div>`;
+    subtitleBlockHtml += `</div>`;
+  }
+
   let metaItems = [];
-  const addMeta = (icon, val, isMandatory = false) => {
+  const addMeta = (icon, val, isMandatory = false, isFullWidth = false) => {
       if (isMandatory || (val && String(val).trim() !== '-' && String(val).trim() !== '')) {
           let displayVal = (val && String(val).trim() !== '') ? val : '-';
-          metaItems.push(`<div class="mh-meta-item">${getInfoIconHtml(icon)} ${displayVal}</div>`);
+          let fwClass = isFullWidth ? " full-width" : "";
+          // Išskiriame tekstą į span dėl išlygiavimo su ikona
+          metaItems.push(`<div class="mh-meta-item${fwClass}">${getInfoIconHtml(icon)} <span>${displayVal}</span></div>`);
       }
   };
-  addMeta('ic_info_language.svg', m.Dubbing);
-  addMeta('ic_info_subs.svg', m.Subtitles, true);
-  addMeta('ic_info_year.svg', m.Year);
-  addMeta('ic_info_country.svg', m.Country);
+  
+  // TINKLELIO IŠDĖSTYMAS (Grid)
+  addMeta('ic_info_language.svg', injectFlags(m.Dubbing)); // Dubliažas (su vėliavom)
+  addMeta('ic_info_subs.svg', injectFlags(m.Subtitles), true); // Subtitrai (su vėliavom)
+  addMeta('ic_info_duration.svg', m.Duration); // Trukmė
+  addMeta('ic_info_year.svg', m.Year); // Metai
+  addMeta('ic_info_country.svg', m.Country, false, true); // Šalis (išplečiama per visą plotį)
 
   let metaGridHtml = metaItems.length > 0 ? `<div class="mh-meta-grid">${metaItems.join('')}</div>` : '';
 
@@ -105,15 +156,15 @@ function renderMovie(m) {
       <div class="mh-info">
         <div class="mh-title-en">${m.OriginalTitle || ''}</div>
         ${m.LithuanianTitle ? `<div class="mh-title-lt">${m.LithuanianTitle}</div>` : ''}
+        ${subtitleBlockHtml}
         ${metaGridHtml}
       </div>
     </div>
   `;
 
-  // 4 PUNKTAS: Pavadinimas pakeistas į „PERSONAŽO TRANSFORMACIJA FILME“
   let transformHtml = (m.TransformationStage && String(m.TransformationStage).trim() !== '-') ? `
     <div class="transformation-box">
-      <div class="transformation-box-label">PERSONAŽO TRANSFORMACIJA FILME</div>
+      <div class="transformation-box-label">${config.text_label_transform || 'PERSONAŽO TRANSFORMACIJA FILME'}</div>
       ${m.TransformationStage}
     </div>
   ` : '';
@@ -146,7 +197,6 @@ function renderMovie(m) {
   if (hasQuote || hasFact) {
     quoteFactHtml = `<div class="quote-fact-box">`;
     if (hasQuote) {
-      // 2 PUNKTAS: Pašalintos kodo dedamos kabutės, naudojamas grynas tekstas iš tavo CMS
       quoteFactHtml += `
         <div class="qf-row">
           ${getInfoIconHtml('ic_info_quote.svg')}
@@ -154,16 +204,16 @@ function renderMovie(m) {
         </div>`;
     }
     if (hasFact) {
+      const factPrefix = config.text_label_fact ? `<span class="qf-label">${config.text_label_fact}</span>` : '';
       quoteFactHtml += `
         <div class="qf-row">
           ${getInfoIconHtml('ic_info_fact.svg')}
-          <div>${m.Fact}</div>
+          <div>${factPrefix}${m.Fact}</div>
         </div>`;
     }
     quoteFactHtml += `</div>`;
   }
 
-  // 3 PUNKTAS: Apdovanojimai sėkmingai skaidomi pastraipomis (nauja eilutė išlaikoma)
   let awardsHtml = '';
   if (m.Awards && String(m.Awards).trim() !== '-' && String(m.Awards).trim() !== '') {
     const awardParagraphs = String(m.Awards).split('\n').map(p => p.trim()).filter(Boolean);
@@ -192,7 +242,8 @@ function renderMovie(m) {
   `).join('');
   let ratingsBlock = `<div class="ratings-container">${ratingsHtml}</div><div class="ratings-date">Atnaujinta: ${ratingDateStr}</div>`;
 
-  let imdbLinkHtml = m.IMDbLink && String(m.IMDbLink).trim() !== '-' ? `<a href="${m.IMDbLink}" target="_blank" class="btn-outline" style="text-decoration:none;"><img src="images/logos/ic_rate_imdb.svg" style="height:20px;"> peržiūrėti filmo IMDb puslapį.</a>` : '';
+  const btnImdbText = config.text_btn_imdb || 'peržiūrėti filmo IMDb puslapį.';
+  let imdbLinkHtml = m.IMDbLink && String(m.IMDbLink).trim() !== '-' ? `<a href="${m.IMDbLink}" target="_blank" class="btn-outline" style="text-decoration:none;"><img src="images/logos/ic_rate_imdb.svg" style="height:20px;"> ${btnImdbText}</a>` : '';
 
   let trailerHtml = '';
   if (m.TrailerYouTube && String(m.TrailerYouTube).trim() !== '-') {
@@ -203,10 +254,11 @@ function renderMovie(m) {
           if (ampersandIndex !== -1) embedUrl = embedUrl.substring(0, ampersandIndex);
       }
       
+      const trailerLabel = config.text_label_trailer || 'Žiūrėti filmo anonsą per';
       trailerHtml = `
           <div class="trailer-placeholder" id="yt-placeholder" data-url="${embedUrl}">
              <div class="trailer-content">
-                <span class="trailer-label">Žiūrėti filmo anonsą per</span>
+                <span class="trailer-label">${trailerLabel}</span>
                 <img src="images/logos/ic_media_play.svg" alt="Play" class="trailer-play-icon">
              </div>
           </div>
@@ -230,6 +282,8 @@ function renderMovie(m) {
     return `<hr class="section-divider">${content}`;
   };
 
+  const commentBtnTxt = config.text_comment_title || 'Palikti komentarą';
+
   container.innerHTML = heroHtml + 
                         addBlock(transformHtml) +
                         addBlock(crewHtml) + 
@@ -240,7 +294,7 @@ function renderMovie(m) {
                         (imdbLinkHtml ? `<div style="margin-top:16px;">${imdbLinkHtml}</div>` : '') +
                         addBlock(trailerHtml) + 
                         addBlock(galHtml) + 
-                        `<hr class="section-divider"><div id="comments-section"></div><button id="open-comment" class="btn-outline" style="margin-top: 16px;">${getInfoIconHtml('ic_info_writer.svg')} Palikti komentarą</button>`;
+                        `<hr class="section-divider"><div id="comments-section"></div><button id="open-comment" class="btn-outline" style="margin-top: 16px;">${getInfoIconHtml('ic_info_writer.svg')} ${commentBtnTxt}</button>`;
 
   const ytPlace = document.getElementById('yt-placeholder');
   if (ytPlace) {
@@ -250,7 +304,7 @@ function renderMovie(m) {
   }
 }
 
-function renderInteractions(data) {
+function renderInteractions(data, config) {
   const cSec = document.getElementById('comments-section');
   if (!cSec) return;
 
@@ -271,7 +325,12 @@ function renderInteractions(data) {
     
     cSec.innerHTML = `<div id="comments-list">${commentsHtml}</div>`;
   } else {
-    const randomPhrase = emptyCommentPhrases[Math.floor(Math.random() * emptyCommentPhrases.length)];
+    // Naudojame frazes iš CMS atskirtas |, jei nėra - naudojame apsauginį fallback'ą
+    const phrasesStr = config.text_empty_comments || "";
+    let phrases = phrasesStr.includes('|') ? phrasesStr.split('|').map(p => p.trim()) : fallbackPhrases;
+    if (phrases.length === 0 || phrases[0] === "") phrases = fallbackPhrases;
+    
+    const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
     cSec.innerHTML = `<div class="empty-state">${randomPhrase}</div>`;
   }
 }
@@ -294,7 +353,7 @@ function setupBottomBar(prev, next) {
   }
 }
 
-function setupLikeBtn() {
+function setupLikeBtn(config) {
   const btn = document.getElementById('btn-like');
   const icon = document.getElementById('like-icon');
   if (!btn || !icon) return;
@@ -314,7 +373,7 @@ function setupLikeBtn() {
     const checkData = JSON.parse(localStorage.getItem(storageKey) || '{}');
     
     if (checkData.date === now && checkData.liked && !isLiked) {
-        alert('Šį filmą šiandien jau vertinote.');
+        alert(config.text_alert_liked || 'Šį filmą šiandien jau vertinote.');
         return;
     }
 
@@ -334,7 +393,7 @@ function setupLikeBtn() {
   };
 }
 
-function setupComments() {
+function setupComments(config) {
   const modal = document.getElementById('comment-modal');
   const openBtn = document.getElementById('open-comment');
   const successMsg = document.getElementById('comment-success');
@@ -342,10 +401,13 @@ function setupComments() {
   const okBtn = document.getElementById('comment-ok');
   const nameInput = document.getElementById('comment-name');
   const textInput = document.getElementById('comment-text');
+  const errorTxt = document.getElementById('comment-error');
+  const btnSubmitSpan = document.getElementById('btn-submit-text');
 
   if (openBtn) openBtn.onclick = () => {
     modal.classList.remove('hidden');
     successMsg.classList.add('hidden');
+    errorTxt.style.display = 'none';
     okBtn.classList.add('hidden');
     actionBtns.classList.remove('hidden');
     nameInput.classList.remove('hidden');
@@ -357,25 +419,35 @@ function setupComments() {
   document.getElementById('close-modal').onclick = () => modal.classList.add('hidden');
   
   document.getElementById('submit-comment').onclick = async () => {
+    errorTxt.style.display = 'none';
     const btn = document.getElementById('submit-comment');
     const name = nameInput.value.trim();
     const text = textInput.value.trim();
     
-    if(!name || !text) return alert('Užpildykite visus laukus');
+    if(!name || !text) {
+      errorTxt.textContent = config.text_error_empty || 'Užpildykite visus laukus.';
+      errorTxt.style.display = 'block';
+      return;
+    }
     
     btn.disabled = true;
-    btn.textContent = "Siunčiama...";
+    btnSubmitSpan.textContent = config.text_btn_sending || "Siunčiama...";
     
-    await postAPI({ action: 'addComment', movieId, name, comment: text });
-    
-    actionBtns.classList.add('hidden');
-    nameInput.classList.add('hidden');
-    textInput.classList.add('hidden');
-    successMsg.classList.remove('hidden');
-    okBtn.classList.remove('hidden');
+    try {
+      await postAPI({ action: 'addComment', movieId, name, comment: text });
+      
+      actionBtns.classList.add('hidden');
+      nameInput.classList.add('hidden');
+      textInput.classList.add('hidden');
+      successMsg.classList.remove('hidden');
+      okBtn.classList.remove('hidden');
+    } catch (err) {
+      errorTxt.textContent = "Klaida siunčiant komentarą.";
+      errorTxt.style.display = 'block';
+    }
     
     btn.disabled = false;
-    btn.textContent = "Išsiųsti";
+    btnSubmitSpan.textContent = config.text_btn_submit || "Išsiųsti";
   };
 
   okBtn.onclick = () => {
