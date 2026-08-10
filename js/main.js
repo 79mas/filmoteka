@@ -6,24 +6,20 @@ async function init() {
   const emptyState = document.getElementById('empty-state');
   const errorMsg = document.getElementById('error-message');
   const searchInput = document.getElementById('search-input');
-  const searchClear = document.getElementById('search-clear'); // NAUJA
+  const searchClear = document.getElementById('search-clear'); 
 
   try {
-    // 1. Pirmiausia parsiunčiame visą konfigūraciją ir išsaugome sesijoje, kad kiti puslapiai ją turėtų
     let config = JSON.parse(sessionStorage.getItem('site_config'));
     if (!config) {
       config = await fetchAPI('getConfig');
       sessionStorage.setItem('site_config', JSON.stringify(config));
     }
 
-    // Pritaikome tekstus iš CMS pagal elementų ID
     applyConfigTexts(config);
 
-    // 2. Parsiunčiame kategorijas ir filmus
     const categories = await fetchAPI('getCategories');
     const rawMovies = await fetchAPI('getMovies');
     
-    // Front-end sanitizacija: tuščias grafas paverčiame į 0 kategoriją
     const allMovies = rawMovies.map(m => {
       if (m.Category === undefined || m.Category === null || String(m.Category).trim() === '') {
         m.Category = 0;
@@ -33,7 +29,6 @@ async function init() {
 
     catContainer.innerHTML = '';
     
-    // "Visi filmai" virtuali kategorija (visada rodoma, jei yra filmų)
     if (allMovies.length > 0) {
       catContainer.appendChild(createCategoryCard({
         ID: 'all',
@@ -42,7 +37,6 @@ async function init() {
       }, allMovies.length));
     }
 
-    // 3. Generuojame kategorijas (Slepiame tuščias)
     categories.forEach(c => {
       const catMovieCount = allMovies.filter(m => String(m.Category) === String(c.ID)).length;
       if (catMovieCount > 0) {
@@ -56,15 +50,13 @@ async function init() {
       emptyState.classList.remove('hidden');
     }
 
-    // 4. PAIEŠKOS LOGIKA SU IŠVALYMU
     searchInput.addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase().trim();
       if (query.length > 0) {
-        searchClear.classList.remove('hidden'); // Parodome X
+        searchClear.classList.remove('hidden'); 
         catContainer.classList.add('hidden');
         searchContainer.classList.remove('hidden');
         
-        // Ieškome per visus 7 stulpelius
         const results = allMovies.filter(m => {
           const searchableText = [
             m.OriginalTitle, m.LithuanianTitle, m.Director, 
@@ -75,24 +67,22 @@ async function init() {
         
         renderSearchResults(results, searchContainer, config, 'all');
       } else {
-        searchClear.classList.add('hidden'); // Paslepiame X
+        searchClear.classList.add('hidden'); 
         catContainer.classList.remove('hidden');
         searchContainer.classList.add('hidden');
       }
     });
 
-    // Mygtuko "X" paspaudimo logika
     searchClear.addEventListener('click', () => {
       searchInput.value = '';
       searchClear.classList.add('hidden');
       catContainer.classList.remove('hidden');
       searchContainer.classList.add('hidden');
-      // Sugrąžiname kursorių atgal į laukelį (patogus UX)
       searchInput.focus(); 
     });
 
-    // 5. KONTAKTŲ FORMOS LOGIKA
     setupContactForm(config);
+    setupInfoModal(config); // NAUJA: Piktogramų lango inicializacija
 
   } catch (e) {
     catContainer.classList.add('hidden');
@@ -121,6 +111,24 @@ function applyConfigTexts(config) {
   setTxt('btn-contact-cancel', config.text_btn_cancel);
   setTxt('btn-contact-submit', config.text_btn_submit);
   setTxt('btn-contact-ok', config.text_btn_ok);
+
+  // NAUJA: Info lango ir mygtuko tekstai
+  setTxt('btn-download-text', config.text_download || 'Atsisiųsti PDF');
+  
+  setTxt('modal-info-title', config.text_info_info);
+  setTxt('info-awards', config.text_info_awards);
+  setTxt('info-camera', config.text_info_camera);
+  setTxt('info-cast', config.text_info_cast);
+  setTxt('info-composer', config.text_info_composer);
+  setTxt('info-country', config.text_info_country);
+  setTxt('info-director', config.text_info_director);
+  setTxt('info-duration', config.text_info_duration);
+  setTxt('info-fact', config.text_info_fact);
+  setTxt('info-language', config.text_info_language);
+  setTxt('info-quote', config.text_info_quote);
+  setTxt('info-subs', config.text_info_subs);
+  setTxt('info-writer', config.text_info_writer);
+  setTxt('info-year', config.text_info_year);
 }
 
 function createCategoryCard(c, count) {
@@ -137,7 +145,6 @@ function createCategoryCard(c, count) {
 function renderSearchResults(movies, container, config, catId) {
   container.innerHTML = '';
   if (movies.length === 0) {
-    // ATNAUJINTA: Naudojamas naujas CMS raktas
     container.innerHTML = `<div class="empty-state" style="margin-top: 32px;">${config.text_search_empty || 'Pagal jūsų užklausą filmų nerasta.'}</div>`;
     return;
   }
@@ -182,6 +189,7 @@ function setupContactForm(config) {
   const modal = document.getElementById('contact-modal');
   const openBtn = document.getElementById('open-contact');
   const closeBtn = document.getElementById('close-contact-modal');
+  const closeBtnX = document.getElementById('close-contact-modal-x'); // NAUJA
   const submitBtn = document.getElementById('submit-contact');
   const okBtn = document.getElementById('contact-ok');
   
@@ -209,6 +217,7 @@ function setupContactForm(config) {
   };
 
   closeBtn.onclick = () => modal.classList.add('hidden');
+  closeBtnX.onclick = () => modal.classList.add('hidden'); // NAUJA
   okBtn.onclick = () => modal.classList.add('hidden');
   
   const validateEmail = (email) => {
@@ -255,6 +264,28 @@ function setupContactForm(config) {
     submitBtn.disabled = false;
     submitBtnSpan.textContent = config.text_btn_submit || "Išsiųsti";
   };
+}
+
+// NAUJA: Funkcija valdanti Piktogramų legendos langą
+function setupInfoModal() {
+  const modal = document.getElementById('info-modal');
+  const openBtn = document.getElementById('open-info');
+  const closeBtnX = document.getElementById('close-info-modal-x');
+
+  if (openBtn) {
+    openBtn.onclick = () => modal.classList.remove('hidden');
+  }
+  
+  if (closeBtnX) {
+    closeBtnX.onclick = () => modal.classList.add('hidden');
+  }
+  
+  // Uždarome, jei paspaudžiama šalia (už lango ribų)
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.add('hidden');
+    }
+  });
 }
 
 init();
