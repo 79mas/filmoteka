@@ -33,9 +33,17 @@
     <button id="open-contact" class="btn-outline"><span class="icon-yellow" style="-webkit-mask-image: url(images/logos/ic_info_writer.svg); mask-image: url(images/logos/ic_info_writer.svg);"></span> <span id="btn-contact-text">Susisiekti</span></button>
   </div>
 
+  <!-- NAUJA: PDF Atsisiuntimo blokas -->
+  <div style="text-align: center; margin-bottom: 24px;">
+    <a href="filmoteka.pdf" download class="btn-outline" style="display: inline-flex; width: auto; padding: 12px 24px; text-decoration: none;">
+      <span id="btn-download-text">Atsisiųsti PDF</span>
+    </a>
+  </div>
+
   <!-- Kontaktų modalinis langas -->
   <div id="contact-modal" class="modal hidden">
     <div class="modal-content">
+      <button id="close-contact-modal-x" class="modal-close-x">✕</button>
       <h3 id="modal-contact-title">Parašykite man</h3>
       <input type="text" id="contact-name" placeholder="Jūsų vardas" maxlength="50">
       <input type="email" id="contact-email" placeholder="Jūsų el. paštas">
@@ -49,11 +57,36 @@
       <button class="btn-outline hidden" id="contact-ok"><span id="btn-contact-ok">Gerai</span></button>
     </div>
   </div>
+
+  <!-- NAUJA: Piktogramų legendos modalinis langas -->
+  <div id="info-modal" class="modal hidden">
+    <div class="modal-content">
+      <button id="close-info-modal-x" class="modal-close-x">✕</button>
+      <h3 id="modal-info-title">Piktogramų reikšmės</h3>
+      <div class="info-legend-list">
+        <div class="info-legend-item"><span class="icon-yellow" style="-webkit-mask-image: url(images/logos/ic_info_awards.svg); mask-image: url(images/logos/ic_info_awards.svg);"></span><span id="info-awards"></span></div>
+        <div class="info-legend-item"><span class="icon-yellow" style="-webkit-mask-image: url(images/logos/ic_info_camera.svg); mask-image: url(images/logos/ic_info_camera.svg);"></span><span id="info-camera"></span></div>
+        <div class="info-legend-item"><span class="icon-yellow" style="-webkit-mask-image: url(images/logos/ic_info_cast.svg); mask-image: url(images/logos/ic_info_cast.svg);"></span><span id="info-cast"></span></div>
+        <div class="info-legend-item"><span class="icon-yellow" style="-webkit-mask-image: url(images/logos/ic_info_composer.svg); mask-image: url(images/logos/ic_info_composer.svg);"></span><span id="info-composer"></span></div>
+        <div class="info-legend-item"><span class="icon-yellow" style="-webkit-mask-image: url(images/logos/ic_info_country.svg); mask-image: url(images/logos/ic_info_country.svg);"></span><span id="info-country"></span></div>
+        <div class="info-legend-item"><span class="icon-yellow" style="-webkit-mask-image: url(images/logos/ic_info_director.svg); mask-image: url(images/logos/ic_info_director.svg);"></span><span id="info-director"></span></div>
+        <div class="info-legend-item"><span class="icon-yellow" style="-webkit-mask-image: url(images/logos/ic_info_duration.svg); mask-image: url(images/logos/ic_info_duration.svg);"></span><span id="info-duration"></span></div>
+        <div class="info-legend-item"><span class="icon-yellow" style="-webkit-mask-image: url(images/logos/ic_info_fact.svg); mask-image: url(images/logos/ic_info_fact.svg);"></span><span id="info-fact"></span></div>
+        <div class="info-legend-item"><span class="icon-yellow" style="-webkit-mask-image: url(images/logos/ic_info_language.svg); mask-image: url(images/logos/ic_info_language.svg);"></span><span id="info-language"></span></div>
+        <div class="info-legend-item"><span class="icon-yellow" style="-webkit-mask-image: url(images/logos/ic_info_quote.svg); mask-image: url(images/logos/ic_info_quote.svg);"></span><span id="info-quote"></span></div>
+        <div class="info-legend-item"><span class="icon-yellow" style="-webkit-mask-image: url(images/logos/ic_info_subs.svg); mask-image: url(images/logos/ic_info_subs.svg);"></span><span id="info-subs"></span></div>
+        <div class="info-legend-item"><span class="icon-yellow" style="-webkit-mask-image: url(images/logos/ic_info_writer.svg); mask-image: url(images/logos/ic_info_writer.svg);"></span><span id="info-writer"></span></div>
+        <div class="info-legend-item"><span class="icon-yellow" style="-webkit-mask-image: url(images/logos/ic_info_year.svg); mask-image: url(images/logos/ic_info_year.svg);"></span><span id="info-year"></span></div>
+      </div>
+    </div>
+  </div>
   
   <nav class="bottom-bar">
     <button class="btn-nav active" disabled><img src="images/logos/ic_nav_home.svg" alt="Namai"></button>
     <button class="btn-nav" disabled><img src="images/logos/ic_nav_list.svg" alt="Sąrašas"></button>
     <button class="btn-nav" disabled><img src="images/logos/ic_nav_like_outline.svg" alt="Patinka"></button>
+    <!-- NAUJA: Info mygtukas -->
+    <button class="btn-nav" id="open-info"><img src="images/logos/ic_info_info.svg" alt="Info"></button>
   </nav>
 
   <script type="module" src="js/main.js"></script>
